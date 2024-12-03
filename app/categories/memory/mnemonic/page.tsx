@@ -155,7 +155,7 @@ const generateWordGroups = (level: number) => {
 
 const getGameSettings = (level: number) => {
   return {
-    correctStreakLimit: 3, // Correct answers needed for level up
+    correctStreakLimit: 2, // Correct answers needed for level up
     wrongStreakLimit: 2, // Wrong answers before level down
     basePoints: 1, // Single base point value
     levelMultiplier: level,

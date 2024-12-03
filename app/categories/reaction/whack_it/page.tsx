@@ -28,11 +28,11 @@ const getGameSettings = (level: number): GameSettings => ({
   levelMultiplier: level,
   maxLevel: 6,
   minLevel: 1,
-  showDuration: Math.max(1000 - level * 100, 400), // Faster at higher levels
+  showDuration: Math.max(1000 - level * 150, 200), // Faster at higher levels
   gridSize: Math.min(level + 1, 4), // Max grid size 4x4
   missLimit: 5,
-  correctStreakLimit: 5, // Level up after 3 correct streaks
-  wrongStreakLimit: 3, // Level down after 2 wrong streaks
+  correctStreakLimit: 3, // Level up after 3 correct streaks
+  wrongStreakLimit: 2, // Level down after 2 wrong streaks
 });
 
 const WhackAMoleGame: React.FC = () => {
