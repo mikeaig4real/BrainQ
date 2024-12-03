@@ -17,7 +17,7 @@ type GameContextType = {
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [categoryIndex, setCategoryIndex] = useState(4);
+  const [categoryIndex, setCategoryIndex] = useState(0);
 
   const resetProgress = () => {
     setCategoryIndex(0);

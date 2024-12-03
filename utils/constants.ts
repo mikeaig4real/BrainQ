@@ -24,11 +24,11 @@ export const categories = [
         label: "sequence", 
         description: "REMEMBER AND REPRODUCE THE SEQUENCE OF ITEM"
       },
-      {
-        id: 3,
-        label: "shapes",
-        description: "MEMORIZE AND RECALL GEOMETRIC SHAPES AND PATTERNS"
-      }
+      // {
+      //   id: 3,
+      //   label: "shapes",
+      //   description: "MEMORIZE AND RECALL GEOMETRIC SHAPES AND PATTERNS"
+      // }
     ]
   },
   {
@@ -100,11 +100,11 @@ export const categories = [
         label: "number_flash",
         description: "QUICKLY IDENTIFY FLASHING NUMBERS"
       },
-      {
-        id: 2,
-        label: "rotation",
-        description: "TRACK AND IDENTIFY ROTATING OBJECTS"
-      }
+      // {
+      //   id: 2,
+      //   label: "rotation",
+      //   description: "TRACK AND IDENTIFY ROTATING OBJECTS"
+      // }
     ]
   },
   { 
@@ -119,11 +119,11 @@ export const categories = [
         label: "scramble",
         description: "UNSCRAMBLE JUMBLED LETTERS TO FORM A VALID WORD"
       },
-      {
-        id: 2,
-        label: "search",
-        description: "FIND SPECIFIC WORDS IN A COLLECTION"
-      }
+      // {
+      //   id: 2,
+      //   label: "search",
+      //   description: "FIND SPECIFIC WORDS IN A COLLECTION"
+      // }
     ]
   }
 ];

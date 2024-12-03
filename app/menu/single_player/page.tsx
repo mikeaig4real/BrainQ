@@ -9,16 +9,16 @@ import IconWrapper from "@/components/IconWrapper";
 
 const SinglePlayerPage = (): JSX.Element => {
   const { categoryIndex } = useGame();
-  console.log({
-    caategoryIndex: categoryIndex,
-  });
+  // console.log({
+  //   caategoryIndex: categoryIndex,
+  // });
   const [randomTest, setRandomTest] = useState(
     categories[categoryIndex].tests[0]
   );
   const router = useRouter();
 
   useEffect(() => {
-    const testIndex = 1; // Math.floor(Math.random() * categories[categoryIndex].tests.length)
+    const testIndex = Math.floor(Math.random() * categories[categoryIndex].tests.length)
     const test = categories[categoryIndex].tests[testIndex];
     setRandomTest(test);
   }, [categories[categoryIndex]]);

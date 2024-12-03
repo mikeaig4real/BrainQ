@@ -13,7 +13,7 @@ interface GameWrapperProps {
 
 const GameWrapper = ({
   children,
-  duration = Infinity,
+  duration = 60,
 }: GameWrapperProps): JSX.Element => {
   const router = useRouter();
   const { setNextCategory, categoryIndex } = useGame();
