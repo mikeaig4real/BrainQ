@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import IconWrapper from "./IconWrapper";
 import { motion } from "motion/react";
 import { PiHeadCircuitDuotone } from "react-icons/pi";
@@ -12,8 +12,22 @@ const IconRotationAnimation: React.FC<{
     bgColor: string;
   }>;
 }> = ({ icons }) => {
-  // Make radius responsive based on viewport width
-  const radius = Math.min((window?.innerWidth || 500) * 0.30, 100); 
+  const [radius, setRadius] = useState<number>(100); // Default radius
+
+  useEffect(() => {
+    // Ensure the code runs only on the client side
+    const updateRadius = () => {
+      const newRadius = Math.min((window.innerWidth || 500) * 0.3, 100);
+      setRadius(newRadius);
+    };
+
+    updateRadius(); // Set initial radius
+    window.addEventListener("resize", updateRadius); // Update radius on resize
+
+    return () => {
+      window.removeEventListener("resize", updateRadius); // Clean up the event listener
+    };
+  }, []);
 
   return (
     <div className="relative w-[90vw] h-[90vw] max-w-[300px] max-h-[300px] flex items-center justify-center">

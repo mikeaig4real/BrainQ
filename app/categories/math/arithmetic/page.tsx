@@ -39,7 +39,7 @@ const getGameSettings = (level: number) => {
 const ArithmeticGame: React.FC = () => {
   const [feedback, setFeedback] = useState<string>("");
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(0);
+  const [level, setLevel] = useState(1);
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [question, setQuestion] = useState<Question>({

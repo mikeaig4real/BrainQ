@@ -26,10 +26,6 @@ interface Sequence {
   activeIcons: IconOption[];
 }
 
-interface IconSequenceGameProps {
-  initialLevel?: number;
-}
-
   // All available icons
   const allIconOptions: IconOption[] = [
     { id: "heart", icon: <FaHeart size={32} /> },
@@ -60,29 +56,18 @@ const getGameSettings = (level: number) => {
 };
 
 
-const IconSequenceGame: React.FC<IconSequenceGameProps> = ({
-  initialLevel = 1,
-}) => {
+const IconSequenceGame: React.FC = () => {
   const [feedback, setFeedback] = useState<string>("");
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSequence, setCurrentSequence] = useState<string[]>([]);
   const [userSequence, setUserSequence] = useState<string[]>([]);
   const [displayIndex, setDisplayIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(initialLevel);
+  const [level, setLevel] = useState(1);
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [activeIcons, setActiveIcons] = useState<IconOption[]>([]);
-
-  // Reset game when initial level changes
-  useEffect(() => {
-    setLevel(initialLevel);
-    setScore(0);
-    setCorrectStreak(0);
-    setWrongStreak(0);
-    setFeedback("");
-  }, [initialLevel]);
 
   // Modified getDifficultySettings to use game settings
   const getDifficultySettings = (level: number): Sequence => {
