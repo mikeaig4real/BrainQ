@@ -12,9 +12,6 @@ interface Question {
   result: number;
 }
 
-interface ArithmeticGameProps {
-  initialLevel?: number;
-}
 
 const getGameSettings = (level: number) => {
   return {
@@ -39,12 +36,10 @@ const getGameSettings = (level: number) => {
   };
 };
 
-const ArithmeticGame: React.FC<ArithmeticGameProps> = ({
-  initialLevel = 1,
-}) => {
+const ArithmeticGame: React.FC = () => {
   const [feedback, setFeedback] = useState<string>("");
   const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(initialLevel);
+  const [level, setLevel] = useState(0);
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [question, setQuestion] = useState<Question>({
@@ -277,16 +272,6 @@ const ArithmeticGame: React.FC<ArithmeticGameProps> = ({
   useEffect(() => {
     generateQuestion();
   }, []); // Only run on initial mount
-
-  // Keep the reset effect for initialLevel changes
-  useEffect(() => {
-    setLevel(initialLevel);
-    setScore(0);
-    setCorrectStreak(0);
-    setWrongStreak(0);
-    setFeedback("");
-    generateQuestion();
-  }, [initialLevel]);
 
   return (
     <div className="relative py-32">
