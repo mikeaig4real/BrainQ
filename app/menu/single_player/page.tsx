@@ -8,7 +8,7 @@ import { IconType } from "react-icons";
 import IconWrapper from "@/components/IconWrapper";
 
 const SinglePlayerPage = (): JSX.Element => {
-  const { categoryIndex } = useGame();
+  const { categoryIndex, setGameIndex } = useGame();
   // console.log({
   //   caategoryIndex: categoryIndex,
   // });
@@ -26,8 +26,12 @@ const SinglePlayerPage = (): JSX.Element => {
   return (
     <section className="flex flex-col items-center justify-around min-h-full gap-16 w-full max-w-md mx-auto">
       <div className="flex items-center justify-center sm:gap-8 gap-2 mb-20 w-full">
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <div
+            onClick={ () =>
+            {
+              setGameIndex(index);
+            }}
             key={category.label}
             className={`flex flex-col items-center cursor-pointer transition-all duration-300
               ${

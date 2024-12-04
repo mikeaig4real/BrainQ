@@ -12,6 +12,7 @@ type GameContextType = {
   setNextCategory: () => void;
   resetProgress: () => void;
   categoryIndex: number;
+  setGameIndex: (index: number) => {};
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -41,6 +42,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setNextCategory,
         resetProgress,
         categoryIndex,
+        setGameIndex,
       }}
     >
       {children}
