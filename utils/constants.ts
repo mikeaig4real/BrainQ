@@ -24,11 +24,6 @@ export const categories = [
         label: "sequence", 
         description: "REMEMBER AND REPRODUCE THE SEQUENCE OF ITEM"
       },
-      // {
-      //   id: 3,
-      //   label: "shapes",
-      //   description: "MEMORIZE AND RECALL GEOMETRIC SHAPES AND PATTERNS"
-      // }
     ]
   },
   {
@@ -100,11 +95,11 @@ export const categories = [
         label: "number_flash",
         description: "QUICKLY IDENTIFY FLASHING NUMBERS"
       },
-      // {
-      //   id: 2,
-      //   label: "rotation",
-      //   description: "TRACK AND IDENTIFY ROTATING OBJECTS"
-      // }
+      {
+        id: 2,
+        label: "bubbles",
+        description: "QUICKLY IDENTIFY THE BALL THAT BOUNCES THE HIGHEST"
+      }
     ]
   },
   { 
