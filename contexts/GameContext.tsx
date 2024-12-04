@@ -12,7 +12,7 @@ type GameContextType = {
   setNextCategory: () => void;
   resetProgress: () => void;
   categoryIndex: number;
-  setGameIndex: (index: number) => {};
+  setGameIndex: (index: number) => void;
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
