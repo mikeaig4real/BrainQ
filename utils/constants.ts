@@ -114,11 +114,11 @@ export const categories = [
         label: "scramble",
         description: "UNSCRAMBLE JUMBLED LETTERS TO FORM A VALID WORD"
       },
-      // {
-      //   id: 2,
-      //   label: "search",
-      //   description: "FIND SPECIFIC WORDS IN A COLLECTION"
-      // }
+      {
+        id: 2,
+        label: "hangman",
+        description: "GUESS THE WORD BEFORE YOU RUN OUT OF LIVES"
+      }
     ]
   }
 ];
