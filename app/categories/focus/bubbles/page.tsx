@@ -121,11 +121,6 @@ const BouncingBallsGame = () => {
       settings,
       lastCorrectIndex
     );
-    console.log({
-      balls,
-      options,
-      correctOptionIndex,
-    });
     setKey((prev) => prev + 1);
     setQuestion({
       balls,

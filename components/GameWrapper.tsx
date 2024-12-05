@@ -27,7 +27,6 @@ const GameWrapper = ({
   const handleTimeout = useCallback(() => {
     if (!isTimeout) {
       setIsTimeout(true);
-      console.log("Before update:", { categoryIndex });
       setNextCategory();
       setTimeout(() => {
         router.push("/menu/single_player");
@@ -47,12 +46,8 @@ const GameWrapper = ({
   }, [countdown]);
 
   useEffect(() => {
-    console.log({
-      countdown,
-    });
     // Timer logic for the game
     if (countdown <= -1) {
-      console.log("timer started");
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {

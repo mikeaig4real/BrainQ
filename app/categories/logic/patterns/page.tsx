@@ -462,10 +462,6 @@ const PatternsGame: React.FC = () => {
       sequenceLength
     );
 
-    console.log({
-      currentPattern,
-    });
-
     const options = generateOptions(
       currentPattern.answer,
       currentPattern.sequence,

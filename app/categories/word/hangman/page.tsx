@@ -343,20 +343,42 @@ interface GameSettings {
   minLevel: number;
   lives: number;
   timeLimit: number;
+  hintCount: number; // Add this new property
 }
+
+interface GameState {
+  lives: number;
+  totalLives: number;
+  selectedWord: string;
+  currentCategory: string;
+  guessedLetters: string[];
+  feedback: string;
+  score: number;
+  level: number;
+  correctStreak: number;
+  wrongStreak: number;
+  usedWords: Set<string>;
+  gameInitialized: boolean;
+  isWordComplete: boolean;
+  remainingHints: number;
+  revealedHints: number[];
+}
+
 
 const getGameSettings = (level: number): GameSettings => {
   return {
-    correctStreakLimit: 2,
+    correctStreakLimit: 3,
     wrongStreakLimit: 2,
     basePoints: 10,
     levelMultiplier: level,
     maxLevel: 6,
     minLevel: 1,
-    lives: Math.max(7 - Math.floor(level / 2), 4), // Lives decrease with level but minimum 4
-    timeLimit: Math.max(90 - level * 10, 30), // Time limit decreases with level but minimum 30s
+    lives: Math.max(7 - Math.floor(level / 2), 4),
+    timeLimit: Math.max(90 - level * 10, 30),
+    hintCount: Math.min(2 + Math.floor(level / 2), 5), // Starts at 3, increases with level, caps at 7
   };
 };
+
 
 const getDifficulty = (level: number): "easy" | "medium" | "hard" => {
   if (level <= 2) return "easy";
@@ -365,127 +387,176 @@ const getDifficulty = (level: number): "easy" | "medium" | "hard" => {
 };
 
 const HangmanGame = () => {
-  const [selectedWord, setSelectedWord] = useState<string>("");
-  const [currentCategory, setCurrentCategory] = useState<string>("");
-  const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
-  const [lives, setLives] = useState<number>(6);
-  const [feedback, setFeedback] = useState<string>("");
-  const [score, setScore] = useState<number>(0);
-  const [level, setLevel] = useState<number>(1);
-  const [correctStreak, setCorrectStreak] = useState<number>(0);
-  const [wrongStreak, setWrongStreak] = useState<number>(0);
-  const [usedWords, setUsedWords] = useState<Set<string>>(new Set());
-  const [gameInitialized, setGameInitialized] = useState<boolean>(false);
-  const [isWordComplete, setIsWordComplete] = useState<boolean>(false);
+  const [gameState, setGameState] = useState<GameState>(() => {
+    const initialSettings = getGameSettings(1);
+    return {
+      lives: initialSettings.lives,
+      totalLives: initialSettings.lives,
+      selectedWord: "",
+      currentCategory: "",
+      guessedLetters: [],
+      feedback: "",
+      score: 0,
+      level: 1,
+      correctStreak: 0,
+      wrongStreak: 0,
+      usedWords: new Set(),
+      gameInitialized: false,
+      isWordComplete: false,
+      remainingHints: initialSettings.hintCount,
+      revealedHints: [],
+    };
+  });
 
-  const settings = getGameSettings(level);
+  const settings = getGameSettings(gameState.level);
 
-  // Check if word is complete whenever guessed letters change
   useEffect(() => {
-    if (selectedWord && guessedLetters.length > 0) {
-      const complete = selectedWord
+    if (gameState.selectedWord && gameState.guessedLetters.length > 0) {
+      const complete = gameState.selectedWord
         .split("")
-        .every((letter) => guessedLetters.includes(letter));
-      setIsWordComplete(complete);
+        .every((letter) => gameState.guessedLetters.includes(letter));
+      setGameState(prev => ({ ...prev, isWordComplete: complete }));
     }
-  }, [guessedLetters, selectedWord]);
+  }, [gameState.guessedLetters, gameState.selectedWord]);
 
-  // Modified setRandomWord function
+  const handleHint = () => {
+    if (gameState.remainingHints <= 0 || gameState.isWordComplete) return;
+
+    const unguessedIndices = gameState.selectedWord
+      .split("")
+      .map((letter, index) => (!gameState.guessedLetters.includes(letter) ? index : -1))
+      .filter((index) => index !== -1 && !gameState.revealedHints.includes(index));
+
+    if (unguessedIndices.length === 0) return;
+
+    const randomIndex = unguessedIndices[Math.floor(Math.random() * unguessedIndices.length)];
+    const letterToReveal = gameState.selectedWord[randomIndex];
+
+    setGameState(prev => ({
+      ...prev,
+      guessedLetters: !prev.guessedLetters.includes(letterToReveal) 
+        ? [...prev.guessedLetters, letterToReveal]
+        : prev.guessedLetters,
+      revealedHints: [...prev.revealedHints, randomIndex],
+      remainingHints: prev.remainingHints - 1
+    }));
+  };
+
   const setRandomWord = () => {
     const categories = Object.keys(wordCategories);
-    const randomCategory =
-      categories[Math.floor(Math.random() * categories.length)];
-    const difficulty = getDifficulty(level);
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+    const difficulty = getDifficulty(gameState.level);
+    const currentSettings = getGameSettings(gameState.level);
 
     const availableWords = wordCategories[
       randomCategory as keyof typeof wordCategories
-    ][difficulty].filter((word) => !usedWords.has(word));
+    ][difficulty].filter((word) => !gameState.usedWords.has(word));
 
     if (availableWords.length === 0) {
-      setUsedWords(new Set());
+      setGameState(prev => ({ ...prev, usedWords: new Set() }));
       setRandomWord();
       return;
     }
 
-    const randomWord =
-      availableWords[Math.floor(Math.random() * availableWords.length)];
-    setSelectedWord(randomWord);
-    setCurrentCategory(randomCategory);
-    setGuessedLetters([]);
-    setLives(settings.lives);
-    setFeedback("");
-    setIsWordComplete(false); // Reset word completion state
-    setUsedWords((prev) => new Set(prev).add(randomWord));
-    setGameInitialized(true);
+    const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+    
+    setGameState(prev => ({
+      ...prev,
+      selectedWord: randomWord,
+      currentCategory: randomCategory,
+      guessedLetters: [],
+      lives: currentSettings.lives,
+      totalLives: currentSettings.lives,
+      feedback: "",
+      isWordComplete: false,
+      usedWords: new Set([...prev.usedWords, randomWord]),
+      gameInitialized: true,
+      remainingHints: currentSettings.hintCount,
+      revealedHints: []
+    }));
   };
 
-  // Handle level progression
-  const handleLevelProgression = (success: boolean) => {
-    if (success) {
-      setCorrectStreak((prev) => prev + 1);
-      setWrongStreak(0);
-      if (correctStreak + 1 >= settings.correctStreakLimit) {
-        if (level < settings.maxLevel) {
-          setLevel((prev) => prev + 1);
-          setCorrectStreak(0);
-        }
-      }
-    } else {
-      setWrongStreak((prev) => prev + 1);
-      setCorrectStreak(0);
-      if (wrongStreak + 1 >= settings.wrongStreakLimit) {
-        if (level > settings.minLevel) {
-          setLevel((prev) => prev - 1);
-          setWrongStreak(0);
-        }
-      }
+  const handleGuess = (letter: string) => {
+    if (gameState.guessedLetters.includes(letter) || 
+        gameState.lives <= 0 || 
+        gameState.isWordComplete) {
+      return;
     }
+
+    setGameState(prev => {
+      const newState = { ...prev };
+      newState.guessedLetters = [...prev.guessedLetters, letter];
+      
+      if (!prev.selectedWord.includes(letter)) {
+        newState.lives = prev.lives - 1;
+        newState.feedback = "Wrong Guess!";
+      } else {
+        newState.feedback = "Good Guess!";
+      }
+      
+      return newState;
+    });
+
+    setTimeout(() => {
+      setGameState(prev => ({ ...prev, feedback: "" }));
+    }, 1000);
   };
 
-  // Initialize game
   useEffect(() => {
-    if (!gameInitialized) {
+    if (!gameState.gameInitialized) {
       setRandomWord();
     }
   }, []);
 
-  const handleGuess = (letter: string) => {
-    if (guessedLetters.includes(letter) || lives <= 0 || isWordComplete) {
-      return;
-    }
-
-    setGuessedLetters((prev) => [...prev, letter]);
-
-    if (!selectedWord.includes(letter)) {
-      setLives((prev) => prev - 1);
-      setFeedback("Wrong Guess!");
-      setTimeout(() => setFeedback(""), 1000);
-    } else {
-      setFeedback("Good Guess!");
-      setTimeout(() => setFeedback(""), 1000);
-    }
-  };
-
-  // Handle game completion and level progression
   useEffect(() => {
-    if (isWordComplete) {
+    if (gameState.isWordComplete) {
       const points = settings.basePoints * settings.levelMultiplier;
-      setScore((prev) => prev + points);
-      setFeedback(`Good!`);
-      handleLevelProgression(true);
+      setGameState(prev => ({
+        ...prev,
+        score: prev.score + points,
+        feedback: "Good!",
+        correctStreak: prev.correctStreak + 1,
+        wrongStreak: 0
+      }));
+
+      if (gameState.correctStreak + 1 >= settings.correctStreakLimit) {
+        if (gameState.level < settings.maxLevel) {
+          setGameState(prev => ({
+            ...prev,
+            level: prev.level + 1,
+            correctStreak: 0
+          }));
+        }
+      }
+
       setTimeout(() => {
-        setFeedback("");
+        setGameState(prev => ({ ...prev, feedback: "" }));
         setRandomWord();
       }, 1000);
-    } else if (lives <= 0) {
-      setFeedback("Wrong!");
-      handleLevelProgression(false);
+    } else if (gameState.lives <= 0) {
+      setGameState(prev => ({
+        ...prev,
+        feedback: "Wrong!",
+        wrongStreak: prev.wrongStreak + 1,
+        correctStreak: 0
+      }));
+
+      if (gameState.wrongStreak + 1 >= settings.wrongStreakLimit) {
+        if (gameState.level > settings.minLevel) {
+          setGameState(prev => ({
+            ...prev,
+            level: prev.level - 1,
+            wrongStreak: 0
+          }));
+        }
+      }
+
       setTimeout(() => {
-        setFeedback("");
+        setGameState(prev => ({ ...prev, feedback: "" }));
         setRandomWord();
       }, 1000);
     }
-  }, [isWordComplete, lives]);
+  }, [gameState.isWordComplete, gameState.lives]);
 
   const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
 
@@ -497,8 +568,7 @@ const HangmanGame = () => {
     remainingLives: number;
     totalLives: number;
   }) => {
-    const wrongGuesses = totalLives - remainingLives;
-
+    const wrongGuesses = Math.max(totalLives - remainingLives, 0);
     const parts = [
       // Base
       <line
@@ -604,48 +674,60 @@ const HangmanGame = () => {
 
     return (
       <svg width="160" height="160">
-        {remainingLives === 0 ? parts :  parts.slice(0, wrongGuesses)}
+        {remainingLives === 0 ? parts : parts.slice(0, wrongGuesses)}
       </svg>
     );
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 p-6 mt-16">
+    <div className="flex flex-col items-center gap-4 mt-16">
       {/* Game Header */}
-      <div className="text-center">
-        <p className="text-lg text-orange-500">Lives : {lives}</p>
-        <p className="text-lg text-orange-500">Category: {currentCategory}</p>
+      <div className="text-center relative">
+        <p className="text-lg text-orange-500">Lives : {gameState.lives}</p>
+        <p className="text-lg text-orange-500">
+          Category: {gameState.currentCategory}
+        </p>
+        <button
+          onClick={handleHint}
+          disabled={gameState.remainingHints <= 0 || gameState.isWordComplete}
+          className="bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 text-sm rounded-sm absolute left-0 bottom-[-2rem]"
+        >
+          Use Hint ({gameState.remainingHints})
+        </button>
       </div>
 
       {/* Hangman Drawing */}
       <div className="flex flex-col items-center">
-        <HangmanDrawing remainingLives={lives} totalLives={settings.lives} />
+        <HangmanDrawing
+          remainingLives={gameState.lives}
+          totalLives={gameState.totalLives}
+        />
 
         {/* Word Display */}
         <div className="flex justify-center gap-2 text-2xl font-mono mt-4">
-          {selectedWord.split("").map((letter, index) => (
-            <span 
-              key={index} 
+          {gameState.selectedWord.split("").map((letter, index) => (
+            <span
+              key={index}
               className="w-8 h-8 flex items-center justify-center border-b-2 border-gray-400"
             >
-              {guessedLetters.includes(letter) ? letter : "_"}
+              {gameState.guessedLetters.includes(letter) ? letter : "_"}
             </span>
           ))}
         </div>
       </div>
 
       {/* Keyboard */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-4">
         {alphabet.map((letter) => (
           <motion.button
             key={letter}
             onClick={() => handleGuess(letter)}
-            className={`sm:px-4 sm:py-2 p-1  text-white rounded-md ${
-              guessedLetters.includes(letter)
+            className={`sm:px-4 sm:py-2 p-2  text-white rounded-md ${
+              gameState.guessedLetters.includes(letter)
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-orange-500 hover:bg-orange-600"
             }`}
-            disabled={guessedLetters.includes(letter)}
+            disabled={gameState.guessedLetters.includes(letter)}
             whileHover={{ scale: 1.1 }}
           >
             {letter.toUpperCase()}
@@ -654,15 +736,15 @@ const HangmanGame = () => {
       </div>
 
       {/* Feedback - adjust text size based on screen size */}
-      {feedback && (
+      {gameState.feedback && (
         <motion.div
           className="fixed top-4 sm:top-6 md:top-8 left-0 right-0 
-                     text-white text-xl sm:text-3xl md:text-6xl 
+                     text-white text-xl sm:text-3xl 
                      font-bold text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 40 }}
         >
-          {feedback}
+          {gameState.feedback}
         </motion.div>
       )}
     </div>

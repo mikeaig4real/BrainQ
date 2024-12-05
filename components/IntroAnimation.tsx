@@ -15,7 +15,6 @@ import { categories } from "@/utils/constants";
 const IntroAnimationComponent = () => {
   const router = useRouter();
   const handleClick = () => {
-    console.log("clicked");
     router.push("/menu");
   };
 

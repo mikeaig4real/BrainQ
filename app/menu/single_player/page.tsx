@@ -60,7 +60,7 @@ const SinglePlayerPage = (): JSX.Element => {
       </div>
 
       <div
-        className={`relative ${categories[categoryIndex].bgColor} w-full p-6 rounded-lg cursor-pointer`}
+        className={`relative ${categories[categoryIndex].bgColor} w-full p-6 rounded-lg cursor-pointer select-none`}
         onClick={() =>
           router.push(
             `/categories/${categories[categoryIndex].label}/${randomTest.label}`

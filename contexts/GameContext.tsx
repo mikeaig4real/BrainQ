@@ -31,7 +31,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const setNextCategory = () => {
     setCategoryIndex((prevIndex) => {
       const nextIndex = (prevIndex + 1) % categories.length;
-      console.log("Updating category index:", { prevIndex, nextIndex });
       return nextIndex;
     });
   };
