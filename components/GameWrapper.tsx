@@ -29,7 +29,7 @@ const GameWrapper = ({
       setIsTimeout(true);
       setNextCategory();
       setTimeout(() => {
-        router.push("/menu/single_player");
+        router.replace("/menu/single_player");
       }, 3000);
     }
   }, [isTimeout, setNextCategory, categoryIndex, router]);

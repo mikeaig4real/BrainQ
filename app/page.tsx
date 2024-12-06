@@ -19,7 +19,7 @@ export default function App() {
   useEffect(() => {}, []);
 
   return (
-    <main className="min-h-screen w-10/12">
+    <main className="min-h-screen w-10/12 select-none">
       <IntroAnimationComponent />
     </main>
   );

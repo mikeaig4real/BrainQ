@@ -24,7 +24,7 @@ const SinglePlayerPage = (): JSX.Element => {
   }, [categories[categoryIndex]]);
 
   return (
-    <section className="flex flex-col items-center justify-around min-h-full gap-16 w-full max-w-md mx-auto">
+    <section className="flex flex-col items-center justify-around min-h-full gap-16 w-full max-w-md mx-auto select-none">
       <div className="flex items-center justify-center sm:gap-8 gap-2 mb-20 w-full">
         {categories.map((category, index) => (
           <div
@@ -62,7 +62,7 @@ const SinglePlayerPage = (): JSX.Element => {
       <div
         className={`relative ${categories[categoryIndex].bgColor} w-full p-6 rounded-lg cursor-pointer select-none`}
         onClick={() =>
-          router.push(
+          router.replace(
             `/categories/${categories[categoryIndex].label}/${randomTest.label}`
           )
         }
