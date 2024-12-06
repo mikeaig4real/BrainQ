@@ -127,7 +127,7 @@ const CountdownGame: React.FC = () => {
         }, 1000);
       } else {
         setCurrentIndex((prev) => prev + 1);
-        setTimeout(() => setFeedback(""), 500);
+        setTimeout(() => setFeedback(""), 1000);
       }
     } else {
       setGameOver(true);
@@ -157,12 +157,12 @@ return (
       {/* Number Display and Progress Container */}
       <div className="flex justify-center mb-8">
         <motion.div
-          className="border-4 border-blue-500 rounded-lg w-full h-32 flex items-center justify-center relative"
+          className="border-4 border-red-500 rounded-lg w-full h-32 flex items-center justify-center relative"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           {/* Current Progress Display */}
-          <div className="flex gap-2 text-blue-500 text-sm">
+          <div className="flex gap-2 text-red-500 text-sm">
             {[...numbers]
               .sort((a, b) =>
                 orderType === "increasing"
@@ -197,7 +197,7 @@ return (
                   ? "bg-green-400 text-white"
                   : gameOver
                   ? "bg-red-400 text-white"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
+                  : "bg-red-500 text-white hover:bg-red-600"
               }
               disabled:opacity-50 transition-colors duration-200
             `}
