@@ -42,6 +42,11 @@ export const categories = [
         id: 2,
         label: "chips",
         description: "CLICK ON THE GROUP OF CHIPS THAT ARE WORTH MORE"
+      },
+      {
+        id: 3,
+        label: "countdown",
+        description: "DEPENDING ON THE QUESTION, SORT THE NUMBERS IN DECREASING OR INCREASING ORDER"
       }
     ]
   },
