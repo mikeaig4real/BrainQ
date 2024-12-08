@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useGame } from "@/contexts/GameContext";
 
 interface MnemonicGameProps {
   initialLevel?: number;
@@ -155,7 +156,7 @@ const generateWordGroups = (level: number) => {
 
 const getGameSettings = (level: number) => {
   return {
-    correctStreakLimit: 2, // Correct answers needed for level up
+    correctStreakLimit: 1, // Correct answers needed for level up
     wrongStreakLimit: 2, // Wrong answers before level down
     basePoints: 1, // Single base point value
     levelMultiplier: level,
@@ -171,6 +172,7 @@ type WordData = {
 };
 
 const MnemonicGame: React.FC = () => {
+  const { updateGameStats } = useGame();
   const [score, setScore] = useState(0);
   const [currentGroup, setCurrentGroup] = useState(1);
   const [wordData, setWordData] = useState<WordData>({});
@@ -214,7 +216,9 @@ const MnemonicGame: React.FC = () => {
         setGamePhase("showing2");
       }, settings.displayTime);
     } else if (gamePhase === "showing2") {
-      timer = setTimeout(() => {
+      timer = setTimeout( () =>
+      {
+        updateGameStats({ totalQuestions: 1 });
         setGamePhase("guessing");
       }, settings.displayTime);
     }
@@ -241,13 +245,22 @@ const MnemonicGame: React.FC = () => {
       if (isCorrect) {
         // Simplified scoring: basePoints * currentLevel
         const points = settings.basePoints * settings.levelMultiplier;
+        updateGameStats({
+          score: points,
+          totalCorrect: 1,
+        });
         setScore((prev) => prev + points);
         setFeedback("Good!");
         setCorrectStreak((prev) => prev + 1);
         setWrongStreak(0);
 
         // Level up on reaching correctStreakLimit
-        if (correctStreak + 1 >= settings.correctStreakLimit) {
+        if ( correctStreak + 1 >= settings.correctStreakLimit )
+        {
+          updateGameStats(
+            { level: Math.min(level + 1, settings.maxLevel) },
+            "set"
+          );
           setTimeout(() => {
             setLevel((prev) => Math.min(prev + 1, settings.maxLevel));
             setCorrectStreak(0);
@@ -262,7 +275,12 @@ const MnemonicGame: React.FC = () => {
         if (
           wrongStreak + 1 >= settings.wrongStreakLimit &&
           level > settings.minLevel
-        ) {
+        )
+        {
+          updateGameStats(
+            { level: Math.max(level - 1, settings.minLevel) },
+            "set"
+          );
           setTimeout(() => {
             setLevel((prev) => Math.max(prev - 1, settings.minLevel));
             setWrongStreak(0);

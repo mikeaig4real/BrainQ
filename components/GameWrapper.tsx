@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { categories } from "@/utils/constants";
 import { useGame } from "@/contexts/GameContext";
 import { motion } from "framer-motion";
@@ -15,8 +14,8 @@ const GameWrapper = ({
   children,
   duration = 60,
 }: GameWrapperProps): JSX.Element => {
-  const router = useRouter();
-  const { setNextCategory, categoryIndex } = useGame();
+  const { categoryIndex, endCategory, startCategory, setNextCategory } =
+    useGame();
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isTimeout, setIsTimeout] = useState(false);
   const [countdown, setCountdown] = useState(3);
@@ -25,14 +24,11 @@ const GameWrapper = ({
 
   // Handle timeout
   const handleTimeout = useCallback(() => {
-    if (!isTimeout) {
+    if ( !isTimeout )
+    {
       setIsTimeout(true);
-      setNextCategory();
-      setTimeout(() => {
-        router.replace("/menu/single_player");
-      }, 3000);
     }
-  }, [isTimeout, setNextCategory, categoryIndex, router]);
+  }, [isTimeout, categoryIndex]);
 
   useEffect(() => {
     // Countdown logic before the game starts
@@ -46,6 +42,7 @@ const GameWrapper = ({
   }, [countdown]);
 
   useEffect(() => {
+    startCategory();
     // Timer logic for the game
     if (countdown <= -1) {
       const timer = setInterval(() => {
@@ -64,14 +61,16 @@ const GameWrapper = ({
     }
   }, [countdown]);
 
-  useEffect(() => {
+  useEffect( () =>
+  {
     if (timeLeft === 0 && !isTimeout) {
       handleTimeout();
+      endCategory();
     }
   }, [timeLeft, handleTimeout, isTimeout]);
 
   return (
-    <div className="relative flex items-center justify-center aspect-square w-[60vw] h-[70vh] min-w-72 rounded-[2rem]">
+    <div className="relative flex items-center justify-center aspect-square w-[60vw] h-[70vh] min-w-72 rounded-[2rem] select-none">
       {/* Timer Display */}
       <div
         className={`absolute ${bgColor} top-0 left-0 w-10 h-10 lg:w-16 lg:h-16 text-2xl lg:text-4xl rounded-full flex items-center justify-center font-bold text-white`}

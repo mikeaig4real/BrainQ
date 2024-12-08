@@ -11,6 +11,7 @@ import {
   FaSun,
   FaCloud,
 } from "react-icons/fa";
+import { useGame } from "@/contexts/GameContext";
 
 const bgColor = "bg-blue-500";
 
@@ -26,21 +27,21 @@ interface Sequence {
   activeIcons: IconOption[];
 }
 
-  // All available icons
-  const allIconOptions: IconOption[] = [
-    { id: "heart", icon: <FaHeart size={32} /> },
-    { id: "star", icon: <FaStar size={32} /> },
-    { id: "circle", icon: <FaCircle size={32} /> },
-    { id: "square", icon: <FaSquare size={32} /> },
-    { id: "cross", icon: <FaCross size={32} /> },
-    { id: "moon", icon: <FaMoon size={32} /> },
-    { id: "sun", icon: <FaSun size={32} /> },
-    { id: "cloud", icon: <FaCloud size={32} /> },
-  ];
+// All available icons
+const allIconOptions: IconOption[] = [
+  { id: "heart", icon: <FaHeart size={32} /> },
+  { id: "star", icon: <FaStar size={32} /> },
+  { id: "circle", icon: <FaCircle size={32} /> },
+  { id: "square", icon: <FaSquare size={32} /> },
+  { id: "cross", icon: <FaCross size={32} /> },
+  { id: "moon", icon: <FaMoon size={32} /> },
+  { id: "sun", icon: <FaSun size={32} /> },
+  { id: "cloud", icon: <FaCloud size={32} /> },
+];
 
 const getGameSettings = (level: number) => {
   return {
-    correctStreakLimit: 3, // Number of correct sequences needed to level up
+    correctStreakLimit: 2, // Number of correct sequences needed to level up
     wrongStreakLimit: 2, // Number of wrong attempts before level down
     basePoints: 1, // Base points for each correct sequence
     levelMultiplier: level,
@@ -55,8 +56,8 @@ const getGameSettings = (level: number) => {
   };
 };
 
-
 const IconSequenceGame: React.FC = () => {
+  const { updateGameStats } = useGame();
   const [feedback, setFeedback] = useState<string>("");
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSequence, setCurrentSequence] = useState<string[]>([]);
@@ -107,6 +108,7 @@ const IconSequenceGame: React.FC = () => {
       // Level up on reaching correctStreakLimit
       if (correctStreak + 1 >= settings.correctStreakLimit) {
         if (level < settings.maxLevel) {
+          updateGameStats({ level: level + 1 }, "set");
           setLevel((prev) => prev + 1);
           setCorrectStreak(0);
         }
@@ -120,6 +122,7 @@ const IconSequenceGame: React.FC = () => {
         wrongStreak + 1 >= settings.wrongStreakLimit &&
         level > settings.minLevel
       ) {
+        updateGameStats({ level: level - 1 }, "set");
         setLevel((prev) => prev - 1);
         setWrongStreak(0);
       }
@@ -162,7 +165,9 @@ const IconSequenceGame: React.FC = () => {
 
     const settings = getGameSettings(level);
 
-    if (iconId !== currentSequence[userSequence.length]) {
+    if ( iconId !== currentSequence[ userSequence.length ] )
+    {
+      updateGameStats({ totalQuestions: 1 });
       setFeedback("Wrong!");
       handleLevelChange(false);
 
@@ -177,10 +182,16 @@ const IconSequenceGame: React.FC = () => {
     setUserSequence(newUserSequence);
 
     // If sequence completed successfully
-    if (newUserSequence.length === currentSequence.length) {
+    if ( newUserSequence.length === currentSequence.length )
+    {
+      updateGameStats({ totalQuestions: 1 });
       setFeedback("Good!");
       // Calculate points based on settings
       const points = settings.basePoints * settings.levelMultiplier;
+      updateGameStats({
+        score: points,
+        totalCorrect: 1,
+      });
       setScore((prev) => prev + points);
       handleLevelChange(true);
 
@@ -199,7 +210,6 @@ const IconSequenceGame: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 select-none">
       <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto">
-
         {/* Sequence Display and User Input Container */}
         <div className="flex justify-center mb-12">
           <motion.div className="border-4 border-blue-500 rounded-lg w-full h-32 flex items-center justify-center relative">

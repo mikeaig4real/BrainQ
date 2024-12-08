@@ -1,12 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useGame } from "@/contexts/GameContext";
 
 const bgColor = "bg-purple-500";
 
 const getGameSettings = (level: number) => {
   return {
-    correctStreakLimit: 3,
+    correctStreakLimit: 2,
     wrongStreakLimit: 2,
     basePoints: 1,
     levelMultiplier: level,
@@ -21,6 +22,7 @@ const getGameSettings = (level: number) => {
 };
 
 const StopwatchGame = () => {
+  const { updateGameStats } = useGame();
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
   const [targetTime, setTargetTime] = useState(0);
@@ -39,7 +41,7 @@ const StopwatchGame = () => {
     // Generate random target between 2.0 and 12.0
     const target = parseFloat((Math.random() * 10 + 2).toFixed(1));
     setTargetTime(target);
-
+    updateGameStats({ totalQuestions: 1 });
     // Start from a random time 1-3 seconds before target
     const startTime = target - (Math.random() * 2 + 1);
     setTime(startTime);
@@ -68,15 +70,23 @@ const StopwatchGame = () => {
 
     if (isWithinPrecision) {
       const points = settings.basePoints * settings.levelMultiplier;
-      setScore(prev => prev + points);
-      setCorrectStreak(prev => prev + 1);
+      updateGameStats({
+        score: points,
+        totalCorrect: 1,
+      });
+      setScore((prev) => prev + points);
+      setCorrectStreak((prev) => prev + 1);
       setWrongStreak(0);
       setFeedback("Good!");
 
       if (correctStreak + 1 >= settings.correctStreakLimit) {
+        updateGameStats(
+          { level: Math.min(level + 1, settings.maxLevel) },
+          "set"
+        );
         setTimeout(() => {
           setFeedback("");
-          setLevel(prev => Math.min(prev + 1, settings.maxLevel));
+          setLevel((prev) => Math.min(prev + 1, settings.maxLevel));
           setCorrectStreak(0);
           setTime(0);
           setIsRunning(true);
@@ -89,14 +99,21 @@ const StopwatchGame = () => {
         }, 1500);
       }
     } else {
-      setWrongStreak(prev => prev + 1);
+      setWrongStreak((prev) => prev + 1);
       setCorrectStreak(0);
       setFeedback("Wrong!");
 
-      if (wrongStreak + 1 >= settings.wrongStreakLimit && level > settings.minLevel) {
+      if (
+        wrongStreak + 1 >= settings.wrongStreakLimit &&
+        level > settings.minLevel
+      ) {
+        updateGameStats(
+          { level: Math.max(level - 1, settings.minLevel) },
+          "set"
+        );
         setTimeout(() => {
           setFeedback("");
-          setLevel(prev => Math.max(prev - 1, settings.minLevel));
+          setLevel((prev) => Math.max(prev - 1, settings.minLevel));
           setWrongStreak(0);
           setTime(0);
           setIsRunning(true);
@@ -115,8 +132,6 @@ const StopwatchGame = () => {
     setIsRunning(false);
     handleResult(true);
   };
-
-  const settings = getGameSettings(level);
 
   return (
     <div className="flex flex-col items-center gap-4">

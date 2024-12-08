@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GiRat as FaRat } from "react-icons/gi";
+import { useGame } from "@/contexts/GameContext";
 
 // Typings
 interface Mole {
@@ -28,14 +29,15 @@ const getGameSettings = (level: number): GameSettings => ({
   levelMultiplier: level,
   maxLevel: 6,
   minLevel: 1,
-  showDuration: Math.max(1000 - level * 150, 200), // Faster at higher levels
+  showDuration: Math.max(1200 - level * 150, 200), // Faster at higher levels
   gridSize: Math.min(level + 1, 4), // Max grid size 4x4
   missLimit: 5,
-  correctStreakLimit: 3, // Level up after 3 correct streaks
+  correctStreakLimit: 5, // Level up after 3 correct streaks
   wrongStreakLimit: 2, // Level down after 2 wrong streaks
 });
 
 const WhackAMoleGame: React.FC = () => {
+  const { updateGameStats } = useGame();
   const [level, setLevel] = useState<number>(1);
   const [score, setScore] = useState<number>(0);
   const [moles, setMoles] = useState<Mole[]>([]);
@@ -70,7 +72,12 @@ const WhackAMoleGame: React.FC = () => {
   }, [moles, settings.showDuration]);
 
   const handleWhack = (index: number) => {
+    updateGameStats({ totalQuestions: 1 });
     if (moles[index].isVisible) {
+      updateGameStats({
+        score: settings.basePoints * settings.levelMultiplier,
+        totalCorrect: 1,
+      });
       setScore((prev) => prev + settings.basePoints * settings.levelMultiplier);
       const updatedMoles = moles.map((mole, i) =>
         i === index ? { ...mole, isVisible: false } : mole
@@ -91,6 +98,7 @@ const WhackAMoleGame: React.FC = () => {
       correctStreak + 1 >= settings.correctStreakLimit &&
       level < settings.maxLevel
     ) {
+      updateGameStats({ level: level + 1 }, "set");
       setLevel((prev) => prev + 1);
       setCorrectStreak(0); // Reset correct streak after level up
     }
@@ -100,6 +108,7 @@ const WhackAMoleGame: React.FC = () => {
       wrongStreak + 1 >= settings.wrongStreakLimit &&
       level > settings.minLevel
     ) {
+      updateGameStats({ level: level - 1 }, "set");
       setLevel((prev) => prev - 1);
       setWrongStreak(0); // Reset wrong streak after level down
     }

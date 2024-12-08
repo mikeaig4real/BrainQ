@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useGame } from "@/contexts/GameContext";
 
 interface Chip {
   id: string;
@@ -62,7 +63,6 @@ const levelTemplates: Record<number, LevelTemplate> = {
   },
 };
 
-
 // Weighted random number generator
 const getWeightedRandom = (min: number, max: number, bias: number): number => {
   const random = Math.random();
@@ -99,10 +99,10 @@ interface GameSettings {
 }
 
 const getGameSettings = (): GameSettings => ({
-  correctStreakLimit: 3,    // Number of correct answers needed to level up
-  wrongStreakLimit: 2,      // Number of wrong answers before leveling down
-  pointsPerCorrect: 1,     // Base points for correct answer (multiplied by level)
-  feedbackDuration: 2500,   // How long to show feedback in ms
+  correctStreakLimit: 3, // Number of correct answers needed to level up
+  wrongStreakLimit: 2, // Number of wrong answers before leveling down
+  pointsPerCorrect: 1, // Base points for correct answer (multiplied by level)
+  feedbackDuration: 2500, // How long to show feedback in ms
 });
 
 const generateColor = (value: number): string => {
@@ -113,7 +113,7 @@ const generateColor = (value: number): string => {
 // Generate both boards for a round
 const generateBoards = (level: number): { left: Chip[]; right: Chip[] } => {
   const template = levelTemplates[level] || levelTemplates[1];
-  
+
   // Generate two boards
   const leftBoard = generateBoard(template);
   const rightBoard = generateBoard(template);
@@ -127,14 +127,17 @@ const generateBoards = (level: number): { left: Chip[]; right: Chip[] } => {
     const adjustBoard = Math.random() > 0.5 ? leftBoard : rightBoard;
     const randomChipIndex = Math.floor(Math.random() * adjustBoard.length);
     adjustBoard[randomChipIndex].value += 2;
-    adjustBoard[randomChipIndex].color = generateColor(adjustBoard[randomChipIndex].value);
+    adjustBoard[randomChipIndex].color = generateColor(
+      adjustBoard[randomChipIndex].value
+    );
   }
 
   return { left: leftBoard, right: rightBoard };
 };
 
 // Modified Game component (only the game logic parts)
-const Game: React.FC = () => {
+const ChipsGame: React.FC = () => {
+  const { updateGameStats } = useGame();
   const settings = getGameSettings(); // Get settings once at component level
 
   const [gameState, setGameState] = useState({
@@ -157,6 +160,7 @@ const Game: React.FC = () => {
       rightBoard: { id: "right", chips: right },
       feedback: "",
     }));
+    updateGameStats({ totalQuestions: 1 });
   };
 
   // Initialize the game when component mounts
@@ -181,33 +185,44 @@ const Game: React.FC = () => {
   const handleBoardClick = (boardId: string) => {
     const isCorrect = evaluateAnswer(boardId);
 
-    setGameState((prev) => {
-      let newLevel = prev.level;
-      let newScore = prev.score;
-      let newCorrectStreak = isCorrect ? prev.correctStreak + 1 : 0;
-      let newWrongStreak = isCorrect ? 0 : prev.wrongStreak + 1;
+    // Calculate new state values outside setState
+    const prevState = gameState;
+    let newLevel = prevState.level;
+    let newScore = prevState.score;
+    let newCorrectStreak = isCorrect ? prevState.correctStreak + 1 : 0;
+    let newWrongStreak = isCorrect ? 0 : prevState.wrongStreak + 1;
 
-      if (isCorrect) {
-        newScore += settings.pointsPerCorrect * prev.level;
-        if (newCorrectStreak >= settings.correctStreakLimit) {
-          newLevel = Math.min(prev.level + 1, 6);
-          newCorrectStreak = 0;
-        }
-      } else {
-        if (newWrongStreak >= settings.wrongStreakLimit) {
-          newLevel = Math.max(prev.level - 1, 1);
-          newWrongStreak = 0;
-        }
+    if (isCorrect) {
+      const pointsToAdd = settings.pointsPerCorrect * prevState.level;
+      updateGameStats({
+        score: pointsToAdd,
+        totalCorrect: 1,
+      });
+      newScore += pointsToAdd;
+
+      if (newCorrectStreak >= settings.correctStreakLimit) {
+        const updatedLevel = Math.min(prevState.level + 1, 6);
+        updateGameStats({ level: updatedLevel }, "set");
+        newLevel = updatedLevel;
+        newCorrectStreak = 0;
       }
+    } else {
+      if (newWrongStreak >= settings.wrongStreakLimit) {
+        const updatedLevel = Math.max(prevState.level - 1, 1);
+        updateGameStats({ level: updatedLevel }, "set");
+        newLevel = updatedLevel;
+        newWrongStreak = 0;
+      }
+    }
 
-      return {
-        ...prev,
-        level: newLevel,
-        score: newScore,
-        feedback: isCorrect ? "Good!" : "Wrong!",
-        correctStreak: newCorrectStreak,
-        wrongStreak: newWrongStreak,
-      };
+    // Update state with calculated values
+    setGameState({
+      ...prevState,
+      level: newLevel,
+      score: newScore,
+      feedback: isCorrect ? "Good!" : "Wrong!",
+      correctStreak: newCorrectStreak,
+      wrongStreak: newWrongStreak,
     });
 
     setTimeout(() => {
@@ -277,4 +292,4 @@ const Game: React.FC = () => {
   );
 };
 
-export default Game;
+export default ChipsGame;

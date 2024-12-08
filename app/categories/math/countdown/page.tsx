@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useGame } from "@/contexts/GameContext";
 
 // Types
 type OrderType = "increasing" | "decreasing";
@@ -29,7 +30,7 @@ const getGameSettings = (level: number): GameSettings => ({
   numberCount: Math.min(4 + Math.floor(level / 2), 8),
   minDigits: Math.min(level, 4),
   maxDigits: Math.min(level + 1, 5),
-  streakToLevelUp: 3,
+  streakToLevelUp: 4,
   streakToLevelDown: 2,
 });
 
@@ -54,6 +55,7 @@ const generateNumbers = (settings: GameSettings): number[] => {
 
 const CountdownGame: React.FC = () => {
   // State
+  const { updateGameStats } = useGame();
   const [numbers, setNumbers] = useState<NumberTile[]>([]);
   const [orderType, setOrderType] = useState<OrderType>("increasing");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -77,6 +79,7 @@ const CountdownGame: React.FC = () => {
         id: index,
       }))
     );
+    updateGameStats({ totalQuestions: 1 });
     setOrderType(Math.random() > 0.5 ? "increasing" : "decreasing");
     setCurrentIndex(0);
     setGameOver(false);
@@ -86,14 +89,18 @@ const CountdownGame: React.FC = () => {
     if (correct) {
       setCorrectStreak((prev) => prev + 1);
       setWrongStreak(0);
-      if (correctStreak + 1 >= getGameSettings(level).streakToLevelUp) {
+      if ( correctStreak + 1 >= getGameSettings( level ).streakToLevelUp )
+      {
+        updateGameStats({ level: Math.min(level + 1, MAX_LEVEL) }, "set");
         setLevel((prev) => Math.min(prev + 1, MAX_LEVEL));
         setCorrectStreak(0);
       }
     } else {
       setWrongStreak((prev) => prev + 1);
       setCorrectStreak(0);
-      if (wrongStreak + 1 >= getGameSettings(level).streakToLevelDown) {
+      if ( wrongStreak + 1 >= getGameSettings( level ).streakToLevelDown )
+      {
+        updateGameStats({ level: Math.max(level - 1, MIN_LEVEL) }, "set");
         setLevel((prev) => Math.max(prev - 1, MIN_LEVEL));
         setWrongStreak(0);
       }
@@ -109,7 +116,8 @@ const CountdownGame: React.FC = () => {
 
     const isCorrect = clickedNumber.value === sortedNumbers[currentIndex].value;
 
-    if (isCorrect) {
+    if ( isCorrect )
+    {
       setNumbers((prev) =>
         prev.map((num) =>
           num.id === clickedNumber.id ? { ...num, isSelected: true } : num
@@ -119,8 +127,12 @@ const CountdownGame: React.FC = () => {
       if (currentIndex === numbers.length - 1) {
         setFeedback("Good!");
         // Round completed
-        handleLevelProgression(true);
-        setScore((prev) => prev + level * 10);
+        handleLevelProgression( true );
+        updateGameStats({
+          score: level * 1,
+          totalCorrect: 1,
+        });
+        setScore((prev) => prev + level * 1);
         setTimeout(() => {
           setFeedback("");
           startNewRound();

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useGame } from "@/contexts/GameContext";
 
 interface Question {
   num1: number;
@@ -12,10 +13,9 @@ interface Question {
   result: number;
 }
 
-
 const getGameSettings = (level: number) => {
   return {
-    correctStreakLimit: 3, // Correct answers needed for level up
+    correctStreakLimit: 2, // Correct answers needed for level up
     wrongStreakLimit: 2, // Wrong answers before level down
     basePoints: 1, // Single base point value
     levelMultiplier: level,
@@ -37,6 +37,7 @@ const getGameSettings = (level: number) => {
 };
 
 const ArithmeticGame: React.FC = () => {
+  const { updateGameStats } = useGame();
   const [feedback, setFeedback] = useState<string>("");
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -196,6 +197,7 @@ const ArithmeticGame: React.FC = () => {
       missingElement: missingElement.toString(),
       result,
     });
+    updateGameStats({ totalQuestions: 1 });
   };
 
   // Modify the handleChoice function:
@@ -232,6 +234,10 @@ const ArithmeticGame: React.FC = () => {
     if (isCorrect) {
       // Simplified scoring: basePoints * currentLevel
       const points = settings.basePoints * settings.levelMultiplier;
+      updateGameStats({
+        score: points,
+        totalCorrect: 1,
+      });
       setScore((prev) => prev + points);
       setFeedback("Good!");
       setCorrectStreak((prev) => prev + 1);
@@ -239,6 +245,10 @@ const ArithmeticGame: React.FC = () => {
 
       // Level up on reaching correctStreakLimit
       if (correctStreak + 1 >= settings.correctStreakLimit) {
+        updateGameStats(
+          { level: Math.min(level + 1, settings.maxLevel) },
+          "set"
+        );
         setTimeout(() => {
           setLevel((prev) => Math.min(prev + 1, settings.maxLevel));
           setCorrectStreak(0);
@@ -254,6 +264,10 @@ const ArithmeticGame: React.FC = () => {
         wrongStreak + 1 >= settings.wrongStreakLimit &&
         level > settings.minLevel
       ) {
+        updateGameStats(
+          { level: Math.max(level - 1, settings.minLevel) },
+          "set"
+        );
         setTimeout(() => {
           setLevel((prev) => Math.max(prev - 1, settings.minLevel));
           setWrongStreak(0);
@@ -275,7 +289,6 @@ const ArithmeticGame: React.FC = () => {
 
   return (
     <div className="relative py-32">
-
       {/* Equation Display */}
       <div className="w-full flex items-center justify-center gap-4 text-4xl font-bold p-8 rounded shadow-md mb-12 select-none">
         {question.equation.map((part, index) => (

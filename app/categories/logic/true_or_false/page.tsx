@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
+import { useGame } from "@/contexts/GameContext";
 
 interface Question {
   statements: string[];
@@ -659,6 +660,7 @@ const getDifficultyFromLevel = (level: number): Difficulty => {
 };
 
 const TrueOrFalseGame = () => {
+  const { updateGameStats } = useGame();
   const [feedback, setFeedback] = useState<string>("");
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -686,7 +688,8 @@ const TrueOrFalseGame = () => {
       const randomIndex = Math.floor(Math.random() * questions.length);
       const randomQuestion = questions[randomIndex];
       setUsedQuestions(new Set([randomIndex]));
-      setQuestion(randomQuestion);
+      setQuestion( randomQuestion );
+      updateGameStats({ totalQuestions: 1 });
       return;
     }
 
@@ -698,6 +701,7 @@ const TrueOrFalseGame = () => {
     // Add the used question to the set
     setUsedQuestions((prev) => new Set([...prev, randomIndex]));
     setQuestion(randomQuestion);
+    updateGameStats({ totalQuestions: 1 });
   }, [level, usedQuestions]);
 
   // Reset used questions and generate new question when level changes
@@ -712,12 +716,20 @@ const TrueOrFalseGame = () => {
 
     if (isCorrect) {
       const points = settings.basePoints * settings.levelMultiplier;
+      updateGameStats({
+        score: points,
+        totalCorrect: 1,
+      });
       setScore((prev) => prev + points);
       setCorrectStreak((prev) => prev + 1);
       setWrongStreak(0);
       setFeedback("Good!");
 
       if (correctStreak + 1 >= settings.correctStreakLimit) {
+        updateGameStats(
+          { level: Math.min(level + 1, settings.maxLevel) },
+          "set"
+        );
         setTimeout(() => {
           setFeedback(""); // Clear feedback before level change
           setLevel((prev) => Math.min(prev + 1, settings.maxLevel));
@@ -739,6 +751,10 @@ const TrueOrFalseGame = () => {
         wrongStreak + 1 >= settings.wrongStreakLimit &&
         level > settings.minLevel
       ) {
+        updateGameStats(
+          { level: Math.max(level - 1, settings.minLevel) },
+          "set"
+        );
         setTimeout(() => {
           setFeedback(""); // Clear feedback before level change
           setLevel((prev) => Math.max(prev - 1, settings.minLevel));
@@ -757,7 +773,6 @@ const TrueOrFalseGame = () => {
   // Keep the exact same return/JSX from the highlighted code
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 select-none mt-16">
-
       {/* Statements Container */}
       <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto">
         {/* Statements */}
@@ -777,7 +792,7 @@ const TrueOrFalseGame = () => {
             className="text-white font-semibold my-4 md:my-6 text-lg sm:text-2xl md:text-3xl bg-yellow-800 py-2 px-4 rounded-md break-words"
             whileHover={{ scale: 1.02 }}
           >
-            Therefore: {question.finalStatement}...?
+            Therefore: {question.finalStatement}... ?
           </motion.p>
         </div>
 

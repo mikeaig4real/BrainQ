@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGame } from "@/contexts/GameContext";
 
 const wordCategories = {
   programming: {
@@ -333,7 +334,6 @@ const wordCategories = {
   },
 };
 
-
 interface GameSettings {
   correctStreakLimit: number;
   wrongStreakLimit: number;
@@ -364,12 +364,11 @@ interface GameState {
   revealedHints: number[];
 }
 
-
 const getGameSettings = (level: number): GameSettings => {
   return {
     correctStreakLimit: 3,
     wrongStreakLimit: 2,
-    basePoints: 10,
+    basePoints: 1,
     levelMultiplier: level,
     maxLevel: 6,
     minLevel: 1,
@@ -379,7 +378,6 @@ const getGameSettings = (level: number): GameSettings => {
   };
 };
 
-
 const getDifficulty = (level: number): "easy" | "medium" | "hard" => {
   if (level <= 2) return "easy";
   if (level <= 4) return "medium";
@@ -387,6 +385,7 @@ const getDifficulty = (level: number): "easy" | "medium" | "hard" => {
 };
 
 const HangmanGame = () => {
+  const { updateGameStats } = useGame();
   const [gameState, setGameState] = useState<GameState>(() => {
     const initialSettings = getGameSettings(1);
     return {
@@ -415,7 +414,7 @@ const HangmanGame = () => {
       const complete = gameState.selectedWord
         .split("")
         .every((letter) => gameState.guessedLetters.includes(letter));
-      setGameState(prev => ({ ...prev, isWordComplete: complete }));
+      setGameState((prev) => ({ ...prev, isWordComplete: complete }));
     }
   }, [gameState.guessedLetters, gameState.selectedWord]);
 
@@ -424,27 +423,33 @@ const HangmanGame = () => {
 
     const unguessedIndices = gameState.selectedWord
       .split("")
-      .map((letter, index) => (!gameState.guessedLetters.includes(letter) ? index : -1))
-      .filter((index) => index !== -1 && !gameState.revealedHints.includes(index));
+      .map((letter, index) =>
+        !gameState.guessedLetters.includes(letter) ? index : -1
+      )
+      .filter(
+        (index) => index !== -1 && !gameState.revealedHints.includes(index)
+      );
 
     if (unguessedIndices.length === 0) return;
 
-    const randomIndex = unguessedIndices[Math.floor(Math.random() * unguessedIndices.length)];
+    const randomIndex =
+      unguessedIndices[Math.floor(Math.random() * unguessedIndices.length)];
     const letterToReveal = gameState.selectedWord[randomIndex];
 
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
-      guessedLetters: !prev.guessedLetters.includes(letterToReveal) 
+      guessedLetters: !prev.guessedLetters.includes(letterToReveal)
         ? [...prev.guessedLetters, letterToReveal]
         : prev.guessedLetters,
       revealedHints: [...prev.revealedHints, randomIndex],
-      remainingHints: prev.remainingHints - 1
+      remainingHints: prev.remainingHints - 1,
     }));
   };
 
   const setRandomWord = () => {
     const categories = Object.keys(wordCategories);
-    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+    const randomCategory =
+      categories[Math.floor(Math.random() * categories.length)];
     const difficulty = getDifficulty(gameState.level);
     const currentSettings = getGameSettings(gameState.level);
 
@@ -452,15 +457,18 @@ const HangmanGame = () => {
       randomCategory as keyof typeof wordCategories
     ][difficulty].filter((word) => !gameState.usedWords.has(word));
 
+    updateGameStats({ totalQuestions: 1 });
+
     if (availableWords.length === 0) {
-      setGameState(prev => ({ ...prev, usedWords: new Set() }));
+      setGameState((prev) => ({ ...prev, usedWords: new Set() }));
       setRandomWord();
       return;
     }
 
-    const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-    
-    setGameState(prev => ({
+    const randomWord =
+      availableWords[Math.floor(Math.random() * availableWords.length)];
+
+    setGameState((prev) => ({
       ...prev,
       selectedWord: randomWord,
       currentCategory: randomCategory,
@@ -472,33 +480,35 @@ const HangmanGame = () => {
       usedWords: new Set([...prev.usedWords, randomWord]),
       gameInitialized: true,
       remainingHints: currentSettings.hintCount,
-      revealedHints: []
+      revealedHints: [],
     }));
   };
 
   const handleGuess = (letter: string) => {
-    if (gameState.guessedLetters.includes(letter) || 
-        gameState.lives <= 0 || 
-        gameState.isWordComplete) {
+    if (
+      gameState.guessedLetters.includes(letter) ||
+      gameState.lives <= 0 ||
+      gameState.isWordComplete
+    ) {
       return;
     }
 
-    setGameState(prev => {
+    setGameState((prev) => {
       const newState = { ...prev };
       newState.guessedLetters = [...prev.guessedLetters, letter];
-      
+
       if (!prev.selectedWord.includes(letter)) {
         newState.lives = prev.lives - 1;
         newState.feedback = "Wrong Guess!";
       } else {
         newState.feedback = "Good Guess!";
       }
-      
+
       return newState;
     });
 
     setTimeout(() => {
-      setGameState(prev => ({ ...prev, feedback: "" }));
+      setGameState((prev) => ({ ...prev, feedback: "" }));
     }, 1000);
   };
 
@@ -511,48 +521,54 @@ const HangmanGame = () => {
   useEffect(() => {
     if (gameState.isWordComplete) {
       const points = settings.basePoints * settings.levelMultiplier;
-      setGameState(prev => ({
+      updateGameStats({
+        score: points,
+        totalCorrect: 1,
+      });
+      setGameState((prev) => ({
         ...prev,
         score: prev.score + points,
         feedback: "Good!",
         correctStreak: prev.correctStreak + 1,
-        wrongStreak: 0
+        wrongStreak: 0,
       }));
 
       if (gameState.correctStreak + 1 >= settings.correctStreakLimit) {
         if (gameState.level < settings.maxLevel) {
-          setGameState(prev => ({
+          updateGameStats({ level: gameState.level + 1 }, "set");
+          setGameState((prev) => ({
             ...prev,
             level: prev.level + 1,
-            correctStreak: 0
+            correctStreak: 0,
           }));
         }
       }
 
       setTimeout(() => {
-        setGameState(prev => ({ ...prev, feedback: "" }));
+        setGameState((prev) => ({ ...prev, feedback: "" }));
         setRandomWord();
       }, 1000);
     } else if (gameState.lives <= 0) {
-      setGameState(prev => ({
+      setGameState((prev) => ({
         ...prev,
         feedback: "Wrong!",
         wrongStreak: prev.wrongStreak + 1,
-        correctStreak: 0
+        correctStreak: 0,
       }));
 
       if (gameState.wrongStreak + 1 >= settings.wrongStreakLimit) {
         if (gameState.level > settings.minLevel) {
-          setGameState(prev => ({
+          updateGameStats({ level: gameState.level - 1 }, "set");
+          setGameState((prev) => ({
             ...prev,
             level: prev.level - 1,
-            wrongStreak: 0
+            wrongStreak: 0,
           }));
         }
       }
 
       setTimeout(() => {
-        setGameState(prev => ({ ...prev, feedback: "" }));
+        setGameState((prev) => ({ ...prev, feedback: "" }));
         setRandomWord();
       }, 1000);
     }

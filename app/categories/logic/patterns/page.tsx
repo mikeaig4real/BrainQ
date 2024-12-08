@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaSquare, FaCircle, FaStar, FaHeart } from "react-icons/fa";
 
 import { BsFillTriangleFill as FaTriangle } from "react-icons/bs";
+import { useGame } from "@/contexts/GameContext";
 
 const bgColor = "bg-yellow-500";
 
@@ -381,7 +382,7 @@ const generatePattern = (
 const getGameSettings = (): GameSettings => ({
   correctStreakLimit: 3,
   wrongStreakLimit: 2,
-  pointsPerCorrect: 10,
+  pointsPerCorrect: 1,
   feedbackDuration: 2000,
 });
 
@@ -397,6 +398,7 @@ interface GameState {
 }
 
 const PatternsGame: React.FC = () => {
+  const { updateGameStats } = useGame();
   const settings = getGameSettings();
   const [gameState, setGameState] = useState({
     level: 1,
@@ -474,6 +476,7 @@ const PatternsGame: React.FC = () => {
       options,
       feedback: "",
     }));
+    updateGameStats({ totalQuestions: 1 });
   };
 
   const handleAnswer = (answer: string | number) => {
@@ -486,12 +489,18 @@ const PatternsGame: React.FC = () => {
       let newWrongStreak = isCorrect ? 0 : prev.wrongStreak + 1;
 
       if (isCorrect) {
+        updateGameStats({
+          score: settings.pointsPerCorrect * prev.level,
+          totalCorrect: 1,
+        });
         newScore += settings.pointsPerCorrect * prev.level;
         if (newCorrectStreak >= settings.correctStreakLimit) {
+          updateGameStats({ level: Math.min(prev.level + 1, 6) }, "set");
           newLevel = Math.min(prev.level + 1, 6);
           newCorrectStreak = 0;
         }
       } else if (newWrongStreak >= settings.wrongStreakLimit) {
+        updateGameStats({ level: Math.max(prev.level - 1, 1) }, "set");
         newLevel = Math.max(prev.level - 1, 1);
         newWrongStreak = 0;
       }
@@ -500,7 +509,7 @@ const PatternsGame: React.FC = () => {
         ...prev,
         level: newLevel,
         score: newScore,
-        feedback: isCorrect ? "Correct!" : "Wrong!",
+        feedback: isCorrect ? "Good!" : "Wrong!",
         correctStreak: newCorrectStreak,
         wrongStreak: newWrongStreak,
       };

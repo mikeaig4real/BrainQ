@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { useGame } from "@/contexts/GameContext";
 
 const bgColor = "bg-orange-500";
 
@@ -257,7 +258,6 @@ const wordPools = {
   ],
 };
 
-
 const getGameSettings = (level: number) => {
   return {
     correctStreakLimit: 3,
@@ -270,16 +270,17 @@ const getGameSettings = (level: number) => {
 };
 
 // Get random word based on level
-  const getRandomWord = (level:number) => {
-    let pool;
-    if (level <= 2) pool = wordPools.easy;
-    else if (level <= 4) pool = wordPools.medium;
-    else pool = wordPools.hard;
+const getRandomWord = (level: number) => {
+  let pool;
+  if (level <= 2) pool = wordPools.easy;
+  else if (level <= 4) pool = wordPools.medium;
+  else pool = wordPools.hard;
 
-    return pool[Math.floor(Math.random() * pool.length)];
-  };
+  return pool[Math.floor(Math.random() * pool.length)];
+};
 
 const WordScrambleGame = () => {
+  const { updateGameStats } = useGame();
   const [scrambledWord, setScrambledWord] = useState("");
   const [userInput, setUserInput] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -288,7 +289,9 @@ const WordScrambleGame = () => {
   const [level, setLevel] = useState(1);
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
-  const [previousScrambled, setPreviousScrambled] = useState(""); // Add this state
+  const [ previousScrambled, setPreviousScrambled ] = useState( "" ); // Add this state
+  
+  const inputRef = useRef<HTMLInputElement>( null );
 
   const handleLevelProgression = () => {
     const settings = getGameSettings(level);
@@ -298,6 +301,7 @@ const WordScrambleGame = () => {
       correctStreak >= settings.correctStreakLimit &&
       level < settings.maxLevel
     ) {
+      updateGameStats({ level: level + 1 }, "set");
       setLevel((prev) => prev + 1);
       setCorrectStreak(0);
       setWrongStreak(0);
@@ -306,6 +310,7 @@ const WordScrambleGame = () => {
 
     // Check if we should decrease level
     if (wrongStreak >= settings.wrongStreakLimit && level > settings.minLevel) {
+      updateGameStats({ level: level - 1 }, "set");
       setLevel((prev) => prev - 1);
       setCorrectStreak(0);
       setWrongStreak(0);
@@ -348,7 +353,10 @@ const WordScrambleGame = () => {
 
     setPreviousScrambled(scrambled);
     setScrambledWord(scrambled);
-    setUserInput("");
+    setUserInput( "" );
+    updateGameStats( { totalQuestions: 1 } );
+    // focus on input so user can type without clicking on input
+    inputRef.current && inputRef.current.focus();
   };
 
   // Initialize game
@@ -367,6 +375,10 @@ const WordScrambleGame = () => {
     const scoreChange = calculateScore(isCorrect);
 
     if (isCorrect) {
+      updateGameStats({
+        score: scoreChange,
+        totalCorrect: 1,
+      });
       setFeedback("Good!");
       setScore((prev) => Math.max(0, prev + scoreChange));
       setCorrectStreak((prev) => prev + 1);
@@ -410,6 +422,7 @@ const WordScrambleGame = () => {
         <div className="flex flex-col md:flex-row gap-4 w-full px-4 sm:px-0">
           <motion.input
             type="text"
+            ref={inputRef}
             value={userInput}
             onChange={handleInputChange}
             className="w-full sm:flex-1 px-4 sm:px-6 py-3 sm:py-4 text-lg sm:text-2xl rounded-md border-2 border-orange-500 

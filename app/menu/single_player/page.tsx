@@ -8,7 +8,12 @@ import { IconType } from "react-icons";
 import IconWrapper from "@/components/IconWrapper";
 
 const SinglePlayerPage = (): JSX.Element => {
-  const { categoryIndex, setGameIndex } = useGame();
+  const {
+    categoryIndex,
+    setGameIndex,
+    gameSession,
+    setTest,
+  } = useGame();
   // console.log({
   //   caategoryIndex: categoryIndex,
   // });
@@ -18,18 +23,32 @@ const SinglePlayerPage = (): JSX.Element => {
   const router = useRouter();
 
   useEffect(() => {
-    const testIndex = Math.floor(Math.random() * categories[categoryIndex].tests.length)
-    const test = categories[categoryIndex].tests[testIndex];
+    const testIndex = Math.floor(Math.random() * categories[categoryIndex].tests.length);
+    const test = categories?.[categoryIndex]?.tests?.[testIndex] || {};
     setRandomTest(test);
   }, [categories[categoryIndex]]);
+
+  const handleGameClick = () => {
+    const { started, ended } = gameSession[categoryIndex];
+    if (ended) return;
+    setTest(randomTest);
+    router.replace(
+      `/categories/${categories[categoryIndex].label}/${randomTest.label}`
+    );
+  };
+
+  const getGameDivColor = () => {
+    const { started, ended } = gameSession[categoryIndex];
+    if (!ended) return `${categories[categoryIndex].bgColor} cursor-pointer`;
+    return "bg-gray-500 cursor-not-allowed";
+  };
 
   return (
     <section className="flex flex-col items-center justify-around min-h-full gap-16 w-full max-w-md mx-auto select-none">
       <div className="flex items-center justify-center sm:gap-8 gap-2 mb-20 w-full">
         {categories.map((category, index) => (
           <div
-            onClick={ () =>
-            {
+            onClick={() => {
               setGameIndex(index);
             }}
             key={category.label}
@@ -60,12 +79,10 @@ const SinglePlayerPage = (): JSX.Element => {
       </div>
 
       <div
-        className={`relative ${categories[categoryIndex].bgColor} w-full p-6 rounded-lg cursor-pointer select-none`}
-        onClick={() =>
-          router.replace(
-            `/categories/${categories[categoryIndex].label}/${randomTest.label}`
-          )
-        }
+        className={`relative ${getGameDivColor()} w-full p-6 rounded-lg select-none hover:scale-105`}
+        onClick={() => {
+          handleGameClick();
+        }}
       >
         <p className="text-white text-lg pr-8">{randomTest.description}</p>
         <svg

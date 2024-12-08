@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGame } from "@/contexts/GameContext";
 
 // Add this interface
 interface FlashingNumbersQuestion {
@@ -27,6 +28,7 @@ const getGameSettings = (level: number) => {
 };
 
 const FlashingNumbersGame = () => {
+  const { updateGameStats } = useGame();
   const [feedback, setFeedback] = useState<string>("");
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -38,10 +40,10 @@ const FlashingNumbersGame = () => {
     correctOptionIndex: 0,
   });
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [ key, setKey ] = useState( 0 );
-   const [lastCorrectIndex, setLastCorrectIndex] = useState<number | undefined>(
-     undefined
-   );
+  const [key, setKey] = useState(0);
+  const [lastCorrectIndex, setLastCorrectIndex] = useState<number | undefined>(
+    undefined
+  );
 
   // Generate a random sequence
   const generateSequence = (length: number): number[] =>
@@ -111,6 +113,7 @@ const FlashingNumbersGame = () => {
       options,
       correctOptionIndex,
     });
+    updateGameStats({ totalQuestions: 1 });
     setLastCorrectIndex(correctOptionIndex);
     setCurrentIndex(0);
   };
@@ -122,12 +125,16 @@ const FlashingNumbersGame = () => {
 
     if (isCorrect) {
       const points = settings.basePoints * settings.levelMultiplier;
-      setScore((prev) => prev + points);
+      updateGameStats({ score: points, totalCorrect: 1 });
       setFeedback("Good!");
       setCorrectStreak((prev) => prev + 1);
       setWrongStreak(0);
 
       if (correctStreak + 1 >= settings.correctStreakLimit) {
+        updateGameStats(
+          { level: Math.min(level + 1, settings.maxLevel) },
+          "set"
+        );
         setTimeout(() => {
           setFeedback("");
           setLevel((prev) => Math.min(prev + 1, settings.maxLevel));
@@ -148,7 +155,12 @@ const FlashingNumbersGame = () => {
       if (
         wrongStreak + 1 >= settings.wrongStreakLimit &&
         level > settings.minLevel
-      ) {
+      )
+      {
+        updateGameStats(
+          { level: Math.max(level - 1, settings.minLevel) },
+          "set"
+        );
         setTimeout(() => {
           setFeedback("");
           setLevel((prev) => Math.max(prev - 1, settings.minLevel));
