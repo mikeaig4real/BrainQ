@@ -26,7 +26,7 @@ const IntroAnimationComponent = () => {
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-center md:justify-between gap-8">
         {/* Logo section - larger on bigger screens, centered on mobile */}
         <div className="w-full md:w-1/3 flex justify-center md:justify-start mr-5">
-          <LogoText text="ThinQ" />
+          <LogoText text="Brain-Q" />
         </div>
 
         {/* Right section with icons and text */}

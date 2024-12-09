@@ -4,7 +4,7 @@ const NavBarComponent = () => {
   return (
     <div className="navbar bg-black rounded-full">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">Think-Q</a>
+        <a className="btn btn-ghost text-xl">Brain-Q</a>
       </div>
       <div className="flex-none gap-2">
         <div className="dropdown dropdown-end">
