@@ -371,7 +371,7 @@ const WordScrambleGame = () => {
 
   // Handle submission
   const handleSubmit = () => {
-    const isCorrect = userInput.replace(' ', "") === currentWord;
+    const isCorrect = userInput.replace(/\s+/g, '') === currentWord;
     const scoreChange = calculateScore(isCorrect);
 
     if (isCorrect) {
