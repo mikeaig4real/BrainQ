@@ -213,6 +213,27 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setAllowClicks(true);
   };
 
+  useEffect( () =>
+  {
+    console.log({
+      categoryIndex,
+      gameSession,
+      storageService,
+      user,
+      duration,
+      router,
+      allowClicks,
+    });
+  }, [
+    categoryIndex,
+    gameSession,
+    storageService,
+    user,
+    duration,
+    router,
+    allowClicks,
+  ])
+
   useEffect(() => {
     if (user) {
       const { loginId: email } = user.signInDetails as UserInfo;

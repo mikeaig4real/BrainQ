@@ -9,6 +9,11 @@ import IconWrapper from "@/components/IconWrapper";
 
 const SinglePlayerPage = (): JSX.Element => {
   const { categoryIndex, setGameIndex, gameSession, setTest, allowClicks } = useGame();
+  console.log({
+    categoryIndex,
+    gameSession,
+    allowClicks,
+  },"single_player");
   const [randomTest, setRandomTest] = useState(
     categories[categoryIndex]?.tests?.[0]
   );
