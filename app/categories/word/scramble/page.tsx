@@ -400,7 +400,7 @@ const WordScrambleGame = () => {
           className="flex justify-center mb-12"
         >
           <div className="border-4 border-orange-500 rounded-lg w-full py-8 flex items-center justify-center">
-            <div className="text-6xl font-bold text-orange-500 tracking-wider">
+            <div className="text-4xl font-bold text-orange-500 tracking-wider">
               {scrambledWord}
             </div>
           </div>
