@@ -10,7 +10,7 @@ import IconWrapper from "@/components/IconWrapper";
 const SinglePlayerPage = (): JSX.Element => {
   const { categoryIndex, setGameIndex, gameSession, setTest, allowClicks } = useGame();
   const [randomTest, setRandomTest] = useState(
-    categories[categoryIndex].tests[0]
+    categories[categoryIndex]?.tests?.[0]
   );
   const router = useRouter();
 
@@ -29,7 +29,7 @@ const SinglePlayerPage = (): JSX.Element => {
       !session?.[categoryIndex].ended
     )
       return ( session?.[ categoryIndex ]?.test?.id || 1 ) - 1;
-    return Math.floor(Math.random() * categories[categoryIndex].tests.length);
+    return Math.floor(Math.random() * categories?.[categoryIndex]?.tests?.length);
   };
 
   useEffect(() => {

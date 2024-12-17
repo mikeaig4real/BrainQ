@@ -18,7 +18,7 @@ export const categories = [
         id: 1,
         label: "mnemonic",
         qps: 0.11,
-        description: "FIND THE WORD(S) COMMON TO THE TWO DISPLAYED GROUPS."
+        description: "FIND THE WORD(S) COMMON TO THE TWO DISPLAYED GROUPS"
       },
       {
         id: 2,
@@ -71,7 +71,7 @@ export const categories = [
       {
         id: 2,
         label: "patterns",
-        qps: 0.33,
+        qps: 0.20,
         description: "IDENTIFY AND COMPLETE LOGICAL PATTERNS"
       }
     ]

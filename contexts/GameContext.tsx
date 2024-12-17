@@ -49,7 +49,7 @@ type Category = {
 type SessionState = Category[];
 
 const SESSION_STATE: SessionState = categories.map((category) => {
-  const tests = category.tests.reduce((acc, curr) => {
+  const tests = category?.tests?.reduce((acc, curr) => {
     return {
       ...acc,
       [curr.label]: {
@@ -180,7 +180,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }
 
   const getCategoryIndexFromSession = (session: typeof SESSION_STATE) => {
-    const categoryIndex = session.findIndex((category) => !category.ended);
+    const categoryIndex = session?.findIndex((category) => !category?.ended);
     return categoryIndex;
   };
 
@@ -260,7 +260,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (category.id === categoryIndex + 1) {
         category.ended = true;
         category.endedAt = new Date();
-        category.tests[category.test.label].level = category.test.level;
+        category.tests[category?.test?.label].level = category.test.level;
         const progression = category.categoryProgression;
         const totalCorrect = category.test.totalCorrect;
         const totalQuestions = category.test.totalQuestions;
@@ -317,7 +317,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const setTestData = gameSession.map((category) => {
       if (category.id === categoryIndex + 1) {
         const level =
-          gameSession?.[categoryIndex]?.tests?.[randomTest.label].level || 1;
+          gameSession?.[categoryIndex]?.tests?.[randomTest?.label]?.level || 1;
         return {
           ...category,
           test: {

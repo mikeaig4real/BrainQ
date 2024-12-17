@@ -33,7 +33,7 @@ const getContentFromCategories = ( categories: CategoryType[] ) =>
   const tests = [];
   for ( const category of categories )
   {
-    for ( const test of category.tests )
+    for ( const test of category?.tests )
     {
       tests.push( {
         title: `${formatLabel(test.label)} (${category.label.toUpperCase()})`,
@@ -79,6 +79,14 @@ export const helpData = [
       {
         title: 'Is Brain-Q suitable for all ages?',
         description: 'Absolutely! Brain-Q is designed for users of all ages. The adaptive difficulty ensures everyone can benefit from the exercises.'
+      },
+      {
+        title: 'All Questions Correct, Stats still low?',
+        description: "Yes, It's possible to get all questions correctly but still low performance, this is because just as correctness is measured, speed is measured by how many questions you can answer",
+      },
+      {
+        title: 'Multiple Accounts on the same device..?',
+        description: "For now, Brain-Q better supports a single account per device based on several reasons like user authentication/data management and synchronization",
       }
     ]
   },
