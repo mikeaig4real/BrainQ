@@ -172,15 +172,16 @@ type WordData = {
 };
 
 const MnemonicGame: React.FC = () => {
-  const { updateGameStats } = useGame();
-  const [score, setScore] = useState(0);
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [currentGroup, setCurrentGroup] = useState(1);
   const [wordData, setWordData] = useState<WordData>({});
   const [gamePhase, setGamePhase] = useState("showing1");
   const [feedback, setFeedback] = useState("");
   const [group1Color, setGroup1Color] = useState("");
   const [group2Color, setGroup2Color] = useState("");
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(
+    gameSession?.[categoryIndex]?.test?.level || 1
+  );
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
@@ -243,13 +244,9 @@ const MnemonicGame: React.FC = () => {
         wordData.commonWords.every((w: string) => newSelectedWords.includes(w));
 
       if (isCorrect) {
-        // Simplified scoring: basePoints * currentLevel
-        const points = settings.basePoints * settings.levelMultiplier;
         updateGameStats({
-          score: points,
           totalCorrect: 1,
         });
-        setScore((prev) => prev + points);
         setFeedback("Good!");
         setCorrectStreak((prev) => prev + 1);
         setWrongStreak(0);

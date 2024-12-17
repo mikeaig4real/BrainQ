@@ -353,7 +353,6 @@ interface GameState {
   currentCategory: string;
   guessedLetters: string[];
   feedback: string;
-  score: number;
   level: number;
   correctStreak: number;
   wrongStreak: number;
@@ -385,7 +384,7 @@ const getDifficulty = (level: number): "easy" | "medium" | "hard" => {
 };
 
 const HangmanGame = () => {
-  const { updateGameStats } = useGame();
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [gameState, setGameState] = useState<GameState>(() => {
     const initialSettings = getGameSettings(1);
     return {
@@ -395,8 +394,7 @@ const HangmanGame = () => {
       currentCategory: "",
       guessedLetters: [],
       feedback: "",
-      score: 0,
-      level: 1,
+      level: gameSession?.[categoryIndex]?.test?.level || 1,
       correctStreak: 0,
       wrongStreak: 0,
       usedWords: new Set(),
@@ -522,12 +520,10 @@ const HangmanGame = () => {
     if (gameState.isWordComplete) {
       const points = settings.basePoints * settings.levelMultiplier;
       updateGameStats({
-        score: points,
         totalCorrect: 1,
       });
       setGameState((prev) => ({
         ...prev,
-        score: prev.score + points,
         feedback: "Good!",
         correctStreak: prev.correctStreak + 1,
         wrongStreak: 0,

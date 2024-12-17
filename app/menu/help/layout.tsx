@@ -1,11 +1,9 @@
-import React from 'react'
+import React from "react";
 
-const HelpLayout = () => {
+const HelpLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <section>
-      HelpLayout
-    </section>
-  )
-}
+    <section>{children}</section>
+  );
+};
 
-export default HelpLayout
+export default HelpLayout;

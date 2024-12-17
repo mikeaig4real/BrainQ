@@ -660,10 +660,9 @@ const getDifficultyFromLevel = (level: number): Difficulty => {
 };
 
 const TrueOrFalseGame = () => {
-  const { updateGameStats } = useGame();
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [feedback, setFeedback] = useState<string>("");
-  const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(gameSession?.[categoryIndex]?.test?.level || 1);
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [question, setQuestion] = useState<Question>({
@@ -717,10 +716,8 @@ const TrueOrFalseGame = () => {
     if (isCorrect) {
       const points = settings.basePoints * settings.levelMultiplier;
       updateGameStats({
-        score: points,
         totalCorrect: 1,
       });
-      setScore((prev) => prev + points);
       setCorrectStreak((prev) => prev + 1);
       setWrongStreak(0);
       setFeedback("Good!");

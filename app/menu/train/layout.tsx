@@ -1,11 +1,12 @@
 import React from 'react'
+import ComingSoon from '@/components/ComingSoon'
 
 const TrainLayout = () => {
   return (
     <section>
-      TrainLayout
+      <ComingSoon />
     </section>
-  )
+  );
 }
 
 export default TrainLayout

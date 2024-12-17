@@ -37,11 +37,10 @@ const getGameSettings = (level: number) => {
 };
 
 const ArithmeticGame: React.FC = () => {
-  const { updateGameStats } = useGame();
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [feedback, setFeedback] = useState<string>("");
-  const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
-  const [correctStreak, setCorrectStreak] = useState(0);
+  const [correctStreak, setCorrectStreak] = useState(gameSession?.[categoryIndex]?.test?.level || 1);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [question, setQuestion] = useState<Question>({
     num1: 0,
@@ -232,13 +231,9 @@ const ArithmeticGame: React.FC = () => {
     }
 
     if (isCorrect) {
-      // Simplified scoring: basePoints * currentLevel
-      const points = settings.basePoints * settings.levelMultiplier;
       updateGameStats({
-        score: points,
         totalCorrect: 1,
       });
-      setScore((prev) => prev + points);
       setFeedback("Good!");
       setCorrectStreak((prev) => prev + 1);
       setWrongStreak(0);

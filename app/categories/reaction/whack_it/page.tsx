@@ -37,9 +37,10 @@ const getGameSettings = (level: number): GameSettings => ({
 });
 
 const WhackAMoleGame: React.FC = () => {
-  const { updateGameStats } = useGame();
-  const [level, setLevel] = useState<number>(1);
-  const [score, setScore] = useState<number>(0);
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
+  const [level, setLevel] = useState<number>(
+    gameSession?.[categoryIndex]?.test?.level || 1
+  );
   const [moles, setMoles] = useState<Mole[]>([]);
   const [feedback, setFeedback] = useState<string>("");
   const [missCount, setMissCount] = useState<number>(0);
@@ -75,10 +76,8 @@ const WhackAMoleGame: React.FC = () => {
     updateGameStats({ totalQuestions: 1 });
     if (moles[index].isVisible) {
       updateGameStats({
-        score: settings.basePoints * settings.levelMultiplier,
         totalCorrect: 1,
       });
-      setScore((prev) => prev + settings.basePoints * settings.levelMultiplier);
       const updatedMoles = moles.map((mole, i) =>
         i === index ? { ...mole, isVisible: false } : mole
       );

@@ -137,12 +137,11 @@ const generateBoards = (level: number): { left: Chip[]; right: Chip[] } => {
 
 // Modified Game component (only the game logic parts)
 const ChipsGame: React.FC = () => {
-  const { updateGameStats } = useGame();
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const settings = getGameSettings(); // Get settings once at component level
 
   const [gameState, setGameState] = useState({
-    level: 1,
-    score: 0,
+    level: gameSession?.[categoryIndex]?.test?.level || 1,
     leftBoard: { id: "left", chips: [] as Chip[] },
     rightBoard: { id: "right", chips: [] as Chip[] },
     feedback: "",
@@ -188,17 +187,14 @@ const ChipsGame: React.FC = () => {
     // Calculate new state values outside setState
     const prevState = gameState;
     let newLevel = prevState.level;
-    let newScore = prevState.score;
     let newCorrectStreak = isCorrect ? prevState.correctStreak + 1 : 0;
     let newWrongStreak = isCorrect ? 0 : prevState.wrongStreak + 1;
 
     if (isCorrect) {
       const pointsToAdd = settings.pointsPerCorrect * prevState.level;
       updateGameStats({
-        score: pointsToAdd,
         totalCorrect: 1,
       });
-      newScore += pointsToAdd;
 
       if (newCorrectStreak >= settings.correctStreakLimit) {
         const updatedLevel = Math.min(prevState.level + 1, 6);
@@ -219,7 +215,6 @@ const ChipsGame: React.FC = () => {
     setGameState({
       ...prevState,
       level: newLevel,
-      score: newScore,
       feedback: isCorrect ? "Good!" : "Wrong!",
       correctStreak: newCorrectStreak,
       wrongStreak: newWrongStreak,

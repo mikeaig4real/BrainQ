@@ -280,13 +280,14 @@ const getRandomWord = (level: number) => {
 };
 
 const WordScrambleGame = () => {
-  const { updateGameStats } = useGame();
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [scrambledWord, setScrambledWord] = useState("");
   const [userInput, setUserInput] = useState("");
   const [feedback, setFeedback] = useState("");
   const [currentWord, setCurrentWord] = useState("");
-  const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(
+    gameSession?.[categoryIndex]?.test?.level || 1
+  );
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [ previousScrambled, setPreviousScrambled ] = useState( "" ); // Add this state
@@ -318,15 +319,6 @@ const WordScrambleGame = () => {
     }
 
     return false;
-  };
-
-  const calculateScore = (isCorrect: boolean) => {
-    const settings = getGameSettings(level);
-    if (isCorrect) {
-      // Base points * level multiplier
-      return settings.basePoints * settings.levelMultiplier;
-    }
-    return 0;
   };
 
   // Scramble the word
@@ -372,20 +364,16 @@ const WordScrambleGame = () => {
   // Handle submission
   const handleSubmit = () => {
     const isCorrect = userInput.replace(/\s+/g, '') === currentWord;
-    const scoreChange = calculateScore(isCorrect);
 
     if (isCorrect) {
       updateGameStats({
-        score: scoreChange,
         totalCorrect: 1,
       });
       setFeedback("Good!");
-      setScore((prev) => Math.max(0, prev + scoreChange));
       setCorrectStreak((prev) => prev + 1);
       setWrongStreak(0);
     } else {
       setFeedback("Wrong!");
-      setScore((prev) => Math.max(0, prev + scoreChange));
       setWrongStreak((prev) => prev + 1);
       setCorrectStreak(0);
     }

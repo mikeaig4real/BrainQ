@@ -22,13 +22,14 @@ const getGameSettings = (level: number) => {
 };
 
 const StopwatchGame = () => {
-  const { updateGameStats } = useGame();
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
   const [targetTime, setTargetTime] = useState(0);
   const [feedback, setFeedback] = useState("");
-  const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(
+    gameSession?.[categoryIndex]?.test?.level || 1
+  );
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
 
@@ -41,7 +42,6 @@ const StopwatchGame = () => {
     // Generate random target between 2.0 and 12.0
     const target = parseFloat((Math.random() * 10 + 2).toFixed(1));
     setTargetTime(target);
-    updateGameStats({ totalQuestions: 1 });
     // Start from a random time 1-3 seconds before target
     const startTime = target - (Math.random() * 2 + 1);
     setTime(startTime);
@@ -63,7 +63,10 @@ const StopwatchGame = () => {
     return () => clearInterval(interval);
   }, [isRunning, level]);
 
-  const handleResult = (wasManualStop: boolean) => {
+  const handleResult = ( wasManualStop: boolean ) =>
+  {
+    
+    updateGameStats({ totalQuestions: 1 });
     const settings = getGameSettings(level);
     const difference = Math.abs(time - targetTime);
     const isWithinPrecision = difference <= settings.precisionRequired;
@@ -71,10 +74,8 @@ const StopwatchGame = () => {
     if (isWithinPrecision) {
       const points = settings.basePoints * settings.levelMultiplier;
       updateGameStats({
-        score: points,
         totalCorrect: 1,
       });
-      setScore((prev) => prev + points);
       setCorrectStreak((prev) => prev + 1);
       setWrongStreak(0);
       setFeedback("Good!");

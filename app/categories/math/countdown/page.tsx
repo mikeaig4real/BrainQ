@@ -55,12 +55,13 @@ const generateNumbers = (settings: GameSettings): number[] => {
 
 const CountdownGame: React.FC = () => {
   // State
-  const { updateGameStats } = useGame();
+  const { updateGameStats, categoryIndex, gameSession } = useGame();
   const [numbers, setNumbers] = useState<NumberTile[]>([]);
   const [orderType, setOrderType] = useState<OrderType>("increasing");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [level, setLevel] = useState(INITIAL_LEVEL);
-  const [score, setScore] = useState(0);
+  const [level, setLevel] = useState(
+    gameSession?.[categoryIndex]?.test?.level || 1
+  );
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -129,17 +130,15 @@ const CountdownGame: React.FC = () => {
         // Round completed
         handleLevelProgression( true );
         updateGameStats({
-          score: level * 1,
           totalCorrect: 1,
         });
-        setScore((prev) => prev + level * 1);
         setTimeout(() => {
           setFeedback("");
           startNewRound();
-        }, 1000);
+        }, 1500);
       } else {
         setCurrentIndex((prev) => prev + 1);
-        setTimeout(() => setFeedback(""), 1000);
+        setTimeout(() => setFeedback(""), 1500);
       }
     } else {
       setGameOver(true);

@@ -18,7 +18,9 @@ interface Ball {
 
 const bgColor = "bg-green-500";
 
-const getGameSettings = (level: number) => {
+const getGameSettings = ( level: number ) =>
+{
+  const ballCount = Math.min(4 + Math.floor(level / 2), 8); // 4 to 8 balls
   return {
     correctStreakLimit: 3,
     wrongStreakLimit: 2,
@@ -26,17 +28,16 @@ const getGameSettings = (level: number) => {
     levelMultiplier: level,
     maxLevel: 6,
     minLevel: 1,
-    ballCount: Math.min(4 + Math.floor(level / 2), 8), // 4 to 8 balls
+    ballCount,
     heightVariation: Math.max(100 - level * 10, 20), // Difference between heights decreases with level
-    optionsCount: 4,
+    optionsCount: ballCount,
   };
 };
 
 const BouncingBallsGame = () => {
-  const { updateGameStats } = useGame();
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [feedback, setFeedback] = useState<string>("");
-  const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(gameSession?.[categoryIndex]?.test?.level || 1);
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [question, setQuestion] = useState<BouncingBallsQuestion>({
@@ -86,20 +87,8 @@ const BouncingBallsGame = () => {
       current.maxHeight > prev.maxHeight ? current : prev
     );
 
-    // Create array of all ball IDs
-    const allBallIds = balls.map((ball) => ball.id);
-
-    // Ensure the highest ball is included in options
-    let options = [highestBall.id];
-
-    // Add other random balls until we have enough options
-    while (options.length < settings.optionsCount) {
-      const remainingBalls = allBallIds.filter((id) => !options.includes(id));
-      if (remainingBalls.length === 0) break;
-
-      const randomIndex = Math.floor(Math.random() * remainingBalls.length);
-      options.push(remainingBalls[randomIndex]);
-    }
+    // Since we want all balls as options, we can simply use all ball IDs
+    const options = balls.map((ball) => ball.id);
 
     // Shuffle options
     let shuffledOptions;
@@ -114,6 +103,7 @@ const BouncingBallsGame = () => {
 
     return { options: shuffledOptions, correctOptionIndex };
   };
+
 
   const generateQuestion = (): void => {
     const settings = getGameSettings(level);
@@ -147,7 +137,7 @@ const BouncingBallsGame = () => {
 
     if (isCorrect) {
       const points = settings.basePoints * settings.levelMultiplier;
-      updateGameStats({ score: points, totalCorrect: 1 });
+      updateGameStats({ totalCorrect: 1 });
       setFeedback("Good!");
       setCorrectStreak((prev) => prev + 1);
       setWrongStreak(0);

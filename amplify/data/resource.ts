@@ -1,8 +1,9 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
 const schema = a.schema({
-  Todo: a.model({
-    content: a.string(),
+  UserSession: a.model( {
+    email: a.string(),
+    gameSession: a.json(),
   }).authorization(allow => [allow.owner()]),
 });
 

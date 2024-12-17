@@ -8,29 +8,43 @@ import { IconType } from "react-icons";
 import IconWrapper from "@/components/IconWrapper";
 
 const SinglePlayerPage = (): JSX.Element => {
-  const {
-    categoryIndex,
-    setGameIndex,
-    gameSession,
-    setTest,
-  } = useGame();
-  // console.log({
-  //   caategoryIndex: categoryIndex,
-  // });
+  const { categoryIndex, setGameIndex, gameSession, setTest, allowClicks } = useGame();
   const [randomTest, setRandomTest] = useState(
     categories[categoryIndex].tests[0]
   );
   const router = useRouter();
 
+  const getTestIndex = ({
+    session,
+    categories,
+    categoryIndex,
+  }: {
+    session: any[];
+    categories: any[];
+    categoryIndex: number;
+  }) => {
+    if (
+      session &&
+      session?.[categoryIndex].started &&
+      !session?.[categoryIndex].ended
+    )
+      return ( session?.[ categoryIndex ]?.test?.id || 1 ) - 1;
+    return Math.floor(Math.random() * categories[categoryIndex].tests.length);
+  };
+
   useEffect(() => {
-    const testIndex = Math.floor(Math.random() * categories[categoryIndex].tests.length);
+    const testIndex = getTestIndex({
+      session: gameSession,
+      categories,
+      categoryIndex,
+    });
     const test = categories?.[categoryIndex]?.tests?.[testIndex] || {};
     setRandomTest(test);
-  }, [categories[categoryIndex]]);
+  }, [categoryIndex]);
 
   const handleGameClick = () => {
     const { started, ended } = gameSession[categoryIndex];
-    if (ended) return;
+    if (ended || !allowClicks) return;
     setTest(randomTest);
     router.replace(
       `/categories/${categories[categoryIndex].label}/${randomTest.label}`
@@ -39,17 +53,17 @@ const SinglePlayerPage = (): JSX.Element => {
 
   const getGameDivColor = () => {
     const { started, ended } = gameSession[categoryIndex];
-    if (!ended) return `${categories[categoryIndex].bgColor} cursor-pointer`;
+    if (!ended && allowClicks) return `${categories[categoryIndex].bgColor} cursor-pointer`;
     return "bg-gray-500 cursor-not-allowed";
   };
 
   return (
-    <section className="flex flex-col items-center justify-around min-h-full gap-16 w-full max-w-md mx-auto select-none">
-      <div className="flex items-center justify-center sm:gap-8 gap-2 mb-20 w-full">
+    <section className="flex flex-col items-center justify-around min-h-full sm:gap-16 gap-2 w-full max-w-md mx-auto select-none">
+      <div className="flex items-center justify-center sm:gap-8 gap-2 sm:mb-20 mb-10 w-full">
         {categories.map((category, index) => (
           <div
             onClick={() => {
-              setGameIndex(index);
+              // setGameIndex(index);
             }}
             key={category.label}
             className={`flex flex-col items-center cursor-pointer transition-all duration-300

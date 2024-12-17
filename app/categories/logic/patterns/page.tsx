@@ -388,7 +388,6 @@ const getGameSettings = (): GameSettings => ({
 
 interface GameState {
   level: number;
-  score: number;
   currentPattern: Pattern | null;
   options: (string | number)[];
   feedback: string;
@@ -398,11 +397,10 @@ interface GameState {
 }
 
 const PatternsGame: React.FC = () => {
-  const { updateGameStats } = useGame();
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const settings = getGameSettings();
   const [gameState, setGameState] = useState({
-    level: 1,
-    score: 0,
+    level: gameSession?.[categoryIndex]?.test?.level || 1,
     currentPattern: null as Pattern | null,
     options: [] as (string | number)[],
     feedback: "",
@@ -482,41 +480,39 @@ const PatternsGame: React.FC = () => {
   const handleAnswer = (answer: string | number) => {
     const isCorrect = answer === gameState.currentPattern?.answer;
 
-    setGameState((prev) => {
-      let newLevel = prev.level;
-      let newScore = prev.score;
-      let newCorrectStreak = isCorrect ? prev.correctStreak + 1 : 0;
-      let newWrongStreak = isCorrect ? 0 : prev.wrongStreak + 1;
+    // Calculate new streaks
+    const newCorrectStreak = isCorrect ? gameState.correctStreak + 1 : 0;
+    const newWrongStreak = isCorrect ? 0 : gameState.wrongStreak + 1;
 
-      if (isCorrect) {
-        updateGameStats({
-          score: settings.pointsPerCorrect * prev.level,
-          totalCorrect: 1,
-        });
-        newScore += settings.pointsPerCorrect * prev.level;
-        if (newCorrectStreak >= settings.correctStreakLimit) {
-          updateGameStats({ level: Math.min(prev.level + 1, 6) }, "set");
-          newLevel = Math.min(prev.level + 1, 6);
-          newCorrectStreak = 0;
-        }
-      } else if (newWrongStreak >= settings.wrongStreakLimit) {
-        updateGameStats({ level: Math.max(prev.level - 1, 1) }, "set");
-        newLevel = Math.max(prev.level - 1, 1);
-        newWrongStreak = 0;
-      }
+    // Calculate level changes
+    let newLevel = gameState.level;
+    if (isCorrect && newCorrectStreak >= settings.correctStreakLimit) {
+      newLevel = Math.min(gameState.level + 1, 6);
+      updateGameStats({ level: newLevel }, "set");
+    } else if (!isCorrect && newWrongStreak >= settings.wrongStreakLimit) {
+      newLevel = Math.max(gameState.level - 1, 1);
+      updateGameStats({ level: newLevel }, "set");
+    }
 
-      return {
-        ...prev,
-        level: newLevel,
-        score: newScore,
-        feedback: isCorrect ? "Good!" : "Wrong!",
-        correctStreak: newCorrectStreak,
-        wrongStreak: newWrongStreak,
-      };
+    // Update game stats if correct answer
+    if (isCorrect) {
+      updateGameStats({
+        totalCorrect: 1,
+      });
+    }
+
+    // Update game state
+    setGameState({
+      ...gameState,
+      level: newLevel,
+      feedback: isCorrect ? "Good!" : "Wrong!",
+      correctStreak: newCorrectStreak,
+      wrongStreak: newWrongStreak,
     });
 
     setTimeout(startNewRound, settings.feedbackDuration);
   };
+
 
   useEffect(() => {
     startNewRound();

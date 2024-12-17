@@ -1,11 +1,9 @@
 import React from "react";
 
-
-const SinglePlayerLayout = ({ children }: { children: React.ReactNode }) => {
+const SinglePlayerLayout = ( { children }: { children: React.ReactNode; } ) =>
+{
   return (
-    <section className="min-h-screen w-full flex flex-col py-14 px-6">
-      {children}
-    </section>
+    <section className="w-full flex flex-col py-14 px-6">{children}</section>
   );
 };
 

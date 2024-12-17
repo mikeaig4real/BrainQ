@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
-const StatsLayout = () => {
+const StatsLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <section>
-      StatsLayout
+      {children}
     </section>
-  )
-}
+  );
+};
 
-export default StatsLayout
+export default StatsLayout;

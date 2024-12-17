@@ -14,19 +14,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const [_, __, categoryByPath] = pathname.split("/"); // Get the current path segment
   const categoryByIndex = categories[categoryIndex]?.label;
 
-  // console.log({
-  //   categoryByPath,
-  //   categoryByIndex,
-  //   gameSession,
-  // });
-
   useEffect(() => {
     if (categoryByPath !== categoryByIndex) {
       router.replace("/menu/single_player");
       setIsValidPath(false);
     } else {
       setIsValidPath(true);
-    }
+    } 
   }, [categoryByPath, router, categoryByIndex]);
 
   // Only render GameWrapper if the path is valid

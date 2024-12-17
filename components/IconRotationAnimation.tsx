@@ -13,21 +13,33 @@ const IconRotationAnimation: React.FC<{
   }>;
 }> = ({ icons }) => {
   const [radius, setRadius] = useState<number>(100); // Default radius
+  const [positions, setPositions] = useState<{ x: number; y: number }[]>([]);
 
   useEffect(() => {
-    // Ensure the code runs only on the client side
-    const updateRadius = () => {
+    const updateRadiusAndPositions = () => {
       const newRadius = Math.min((window.innerWidth || 500) * 0.3, 100);
       setRadius(newRadius);
+
+      // Calculate positions on the client
+      const newPositions = icons.map((_, index) => {
+        const angle = (360 / icons.length) * index;
+        const x =
+          Math.round(newRadius * Math.cos((angle * Math.PI) / 180) * 100) / 100;
+        const y =
+          Math.round(newRadius * Math.sin((angle * Math.PI) / 180) * 100) / 100;
+        return { x, y };
+      });
+
+      setPositions(newPositions);
     };
 
-    updateRadius(); // Set initial radius
-    window.addEventListener("resize", updateRadius); // Update radius on resize
+    updateRadiusAndPositions(); // Set initial values
+    window.addEventListener("resize", updateRadiusAndPositions); // Update values on resize
 
     return () => {
-      window.removeEventListener("resize", updateRadius); // Clean up the event listener
+      window.removeEventListener("resize", updateRadiusAndPositions); // Cleanup
     };
-  }, []);
+  }, [icons]);
 
   return (
     <div className="relative w-[90vw] h-[90vw] max-w-[300px] max-h-[300px] flex items-center justify-center">
@@ -48,30 +60,23 @@ const IconRotationAnimation: React.FC<{
           ease: "linear",
         }}
       >
-        {icons.map((IconComponent, index) => {
-          // Calculate position for each icon
-          const angle = (360 / icons.length) * index;
-          const x = radius * Math.cos((angle * Math.PI) / 180);
-          const y = radius * Math.sin((angle * Math.PI) / 180);
-
-          return (
-            <div
-              key={index}
-              className="absolute scale-[0.7] sm:scale-[0.85] md:scale-100"
-              style={{
-                transform: `translate(${x}px, ${y}px)`,
-              }}
-            >
-              <IconWrapper
-                icon={IconComponent.icon}
-                showLabel={false}
-                label={IconComponent.label}
-                bgColor={IconComponent.bgColor}
-                sizing={"w-14 h-14"}
-              />
-            </div>
-          );
-        })}
+        {positions.map((position, index) => (
+          <div
+            key={index}
+            className="absolute scale-[0.7] sm:scale-[0.85] md:scale-100"
+            style={{
+              transform: `translate(${position.x}px, ${position.y}px)`,
+            }}
+          >
+            <IconWrapper
+              icon={icons[index].icon}
+              showLabel={false}
+              label={icons[index].label}
+              bgColor={icons[index].bgColor}
+              sizing={"w-14 h-14"}
+            />
+          </div>
+        ))}
       </motion.div>
     </div>
   );

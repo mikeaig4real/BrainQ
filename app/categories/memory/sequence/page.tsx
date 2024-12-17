@@ -41,7 +41,7 @@ const allIconOptions: IconOption[] = [
 
 const getGameSettings = (level: number) => {
   return {
-    correctStreakLimit: 2, // Number of correct sequences needed to level up
+    correctStreakLimit: 1, // Number of correct sequences needed to level up
     wrongStreakLimit: 2, // Number of wrong attempts before level down
     basePoints: 1, // Base points for each correct sequence
     levelMultiplier: level,
@@ -57,14 +57,15 @@ const getGameSettings = (level: number) => {
 };
 
 const IconSequenceGame: React.FC = () => {
-  const { updateGameStats } = useGame();
+  const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [feedback, setFeedback] = useState<string>("");
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSequence, setCurrentSequence] = useState<string[]>([]);
   const [userSequence, setUserSequence] = useState<string[]>([]);
   const [displayIndex, setDisplayIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(
+    gameSession?.[categoryIndex]?.test?.level || 1
+  );
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -189,10 +190,8 @@ const IconSequenceGame: React.FC = () => {
       // Calculate points based on settings
       const points = settings.basePoints * settings.levelMultiplier;
       updateGameStats({
-        score: points,
         totalCorrect: 1,
       });
-      setScore((prev) => prev + points);
       handleLevelChange(true);
 
       setTimeout(() => {
