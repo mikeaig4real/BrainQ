@@ -174,10 +174,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     await storageService.clearGameSession();
   };
 
-  const haveFinishedAllGames = () =>
-  {
+  const haveFinishedAllGames = () => {
     return gameSession.every((category) => category.started && category.ended);
-  }
+  };
 
   const getCategoryIndexFromSession = (session: typeof SESSION_STATE) => {
     const categoryIndex = session?.findIndex((category) => !category?.ended);
@@ -186,7 +185,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const loadGameSession = async (service: StorageService) => {
     // check to see if a session exits on the local
-    setAllowClicks( false );
+    setAllowClicks(false);
     if (!service) return;
     let prevGameSession = await service.getGameSession();
     if (!prevGameSession) {
@@ -200,9 +199,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
         typeof prevGameSessionAmp?.gameSession === "string"
       ) {
         prevGameSession = JSON.parse(prevGameSessionAmp.gameSession);
-        await service.saveGameSession( prevGameSession );
-      } else
-      {
+        await service.saveGameSession(prevGameSession);
+      } else {
         setAllowClicks(true);
         return;
       }
@@ -213,26 +211,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setAllowClicks(true);
   };
 
-  useEffect( () =>
-  {
-    console.log( {
-      categoryIndex,
-    gameSession,
-    storageService,
-    user,
-    duration,
-    router,
-    allowClicks,
-    })
+  useEffect(() => {
+    haveFinishedAllGames() && resetProgress();
   }, [
-    categoryIndex,
     gameSession,
-    storageService,
-    user,
-    duration,
-    router,
-    allowClicks,
-  ])
+  ]);
 
   useEffect(() => {
     if (user) {
@@ -250,7 +233,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       return category;
     });
     updateGameSession(resetProgressData);
-    saveGameSessionLocal( resetProgressData );
+    saveGameSessionLocal(resetProgressData);
     saveGameSessionAmp(resetProgressData);
   };
 
@@ -258,9 +241,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setCategoryIndex(index);
   };
 
-  const setNextCategory = () =>
-  {
-    const index = getCategoryIndexFromSession( gameSession );
+  const setNextCategory = () => {
+    const index = getCategoryIndexFromSession(gameSession);
     setCategoryIndex((prevIndex) => {
       const nextIndex = (prevIndex + 1) % categories.length;
       return nextIndex === index || index === -1 ? nextIndex : index;
@@ -333,6 +315,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     });
     updateGameSession(startCategoryData);
     saveGameSessionLocal(startCategoryData);
+    saveGameSessionAmp(startCategoryData);
   };
 
   const setTest = (randomTest: any) => {
