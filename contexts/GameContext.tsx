@@ -215,15 +215,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   useEffect( () =>
   {
-    console.log({
+    console.log( {
       categoryIndex,
-      gameSession,
-      storageService,
-      user,
-      duration,
-      router,
-      allowClicks,
-    });
+    gameSession,
+    storageService,
+    user,
+    duration,
+    router,
+    allowClicks,
+    })
   }, [
     categoryIndex,
     gameSession,
@@ -250,7 +250,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       return category;
     });
     updateGameSession(resetProgressData);
-    saveGameSessionLocal(resetProgressData);
+    saveGameSessionLocal( resetProgressData );
+    saveGameSessionAmp(resetProgressData);
   };
 
   const setGameIndex = (index: number) => {
