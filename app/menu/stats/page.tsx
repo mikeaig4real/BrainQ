@@ -92,7 +92,7 @@ const StatsPage = () => {
   useEffect( () =>
   {
     const index = getCategoryIndexFromSession( gameSession );
-    setGameIndex(index);
+    setGameIndex(index === -1 ? 0 : index);
   }, [] );
 
   const progressBars = gameSession.map((category: any) => ({
