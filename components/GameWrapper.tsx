@@ -40,7 +40,7 @@ const GameWrapper = ({ children }: GameWrapperProps): JSX.Element => {
     return {
       avatar,
       showBrand: false,
-      className: "w-auto absolute top-[-4rem] right-0",
+      className: "w-auto absolute top-[-6rem] right-[-0.5rem]",
       navItems: [backToMenu, logOutBtn, gameCategories],
     };
   };
