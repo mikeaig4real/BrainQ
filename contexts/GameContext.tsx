@@ -212,12 +212,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    haveFinishedAllGames() && resetProgress();
-  }, [
-    gameSession,
-  ]);
-
-  useEffect(() => {
     if (user) {
       const { loginId: email } = user.signInDetails as UserInfo;
       const service = new StorageService({ email });
