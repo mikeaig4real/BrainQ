@@ -51,6 +51,12 @@ const Counter = ({
 };
 
 const getConclusion = (categories: { label: string; progress: number[] }[]) => {
+  const notDoneAnyTests = categories.every(
+    (category) => category?.progress?.length === 1 && category?.progress?.[0] === 0
+  );
+  if (notDoneAnyTests) {
+    return "You haven't done any tests yet. Go ahead and start practicing!";
+  }
   const highPerforming = categories
     .filter((cat) => (cat?.progress?.[1] || 0) > 70)
     .map((cat) => cat.label);
@@ -66,9 +72,9 @@ const getConclusion = (categories: { label: string; progress: number[] }[]) => {
   if (lowPerforming.length === 0 && averagePerforming.length === 0) {
     return "Very good overall performance! Keep it up!";
   } else if (lowPerforming.length === 0) {
-    return `You did very great in ${highPerforming.join(
-      ", "
-    )}, good job! Keep practicing with ${averagePerforming.join(", ")}.`;
+    return `You did very great in ${
+      highPerforming?.length ? highPerforming.join(", ") : "most"
+    }, good job! Keep practicing with ${averagePerforming.join(", ")}.`;
   } else {
     return `Hmmm..., you seem to be struggling with ${lowPerforming.join(
       ", "
@@ -89,11 +95,10 @@ const StatsPage = () => {
     },
   };
 
-  useEffect( () =>
-  {
-    const index = getCategoryIndexFromSession( gameSession );
+  useEffect(() => {
+    const index = getCategoryIndexFromSession(gameSession);
     setGameIndex(index === -1 ? 0 : index);
-  }, [] );
+  }, []);
 
   const progressBars = gameSession.map((category: any) => ({
     label: category.label,
@@ -128,8 +133,8 @@ const StatsPage = () => {
                   </h2>
                   <div className="h-5 bg-transparent rounded-full overflow-hidden">
                     <motion.div
-                      initial={ {
-                        width: `${ category?.progress?.[ 0 ] ?? 0 }%`,
+                      initial={{
+                        width: `${category?.progress?.[0] ?? 0}%`,
                         backgroundColor: getProgressColor(
                           category?.progress?.[0] ?? 0
                         ),
@@ -139,7 +144,7 @@ const StatsPage = () => {
                         backgroundColor: getProgressColor(
                           category?.progress?.[1] ?? 0
                         ),
-                      } }
+                      }}
                       transition={{ duration: 5, ease: "easeOut", delay: 2 }}
                       className="h-full rounded-full flex items-center justify-end pr-2"
                     >
@@ -147,7 +152,8 @@ const StatsPage = () => {
                         from={category?.progress?.[0] ?? 0}
                         to={category?.progress?.[1] ?? 0}
                         className="text-black text-sm font-bold"
-                      /><span className="text-black font-extrabold">%</span>
+                      />
+                      <span className="text-black font-extrabold">%</span>
                     </motion.div>
                   </div>
                 </div>
