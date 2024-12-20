@@ -63,8 +63,8 @@ const BouncingBallsGame = () => {
       window.innerWidth < 640
         ? 80
         : window.innerWidth < 768
-        ? 130
-        : 180 + Math.random() * 100;
+        ? 110
+        : 150 + Math.random() * 100;
 
     for (let i = 0; i < settings.ballCount; i++) {
       balls.push({
@@ -263,7 +263,7 @@ const BouncingBallsGame = () => {
             <motion.button
               key={`${key}-${index}`}
               onClick={() => handleChoice(index)}
-              className={`${bgColor} px-4 lg:px-6 py-3 lg:py-4
+              className={`${bgColor} px-4 lg:px-6 py-2 lg:py-2
                        text-base lg:text-lg text-white rounded-md 
                        hover:opacity-90 transition-colors`}
               whileHover={{ scale: 1.02 }}
