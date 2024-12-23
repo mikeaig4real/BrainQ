@@ -1,4 +1,6 @@
 module.exports = {
+  mode: 'jit',
+  darkMode: 'class',
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -14,6 +16,6 @@ module.exports = {
   },
   plugins: [ require( 'daisyui' ) ],
   daisyui: {
-    themes: [ "dark", "light" ],
+    themes: [ "dark" ],
   },
 };

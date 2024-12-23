@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html className={`${audiowide.className} tracking-widest`} lang="en">
+    <html data-theme="dark" className={`${audiowide.className} tracking-widest`} lang="en">
       <body className="flex items-center justify-center min-h-screen bg-base-200">
         <Authenticator.Provider>
           <GameProvider>
