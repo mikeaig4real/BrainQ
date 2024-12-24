@@ -27,10 +27,18 @@ export default function RootLayout({
       className={`${audiowide.className} tracking-widest`}
       lang="en"
     >
-      <body className="flex items-center justify-center min-h-screen bg-base-200 text-neutral-800 dark:text-neutral-200">
+      <head>
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#000000" />
+      </head>
+      <body className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
         <Authenticator.Provider>
           <GameProvider>
-            <ThemeProvider attribute="class" defaultTheme="dark">
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              forcedTheme="dark"
+            >
               <DeviceWrapperComponent>{children}</DeviceWrapperComponent>
             </ThemeProvider>
           </GameProvider>

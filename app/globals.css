@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Your dark theme colors */
+    background-color: #000;
+    color: #fff;
+  }
+}
+
 body {
     background-color: black !important;
     overflow: hidden;
