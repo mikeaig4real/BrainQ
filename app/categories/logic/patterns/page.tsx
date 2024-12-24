@@ -513,7 +513,6 @@ const PatternsGame: React.FC = () => {
     setTimeout(startNewRound, settings.feedbackDuration);
   };
 
-
   useEffect(() => {
     startNewRound();
   }, []);
@@ -600,7 +599,7 @@ const PatternsGame: React.FC = () => {
                 <motion.button
                   key={index}
                   onClick={() => handleAnswer(option)}
-                  className={`${bgColor} flex items-center p-4 lg:p-6 justify-center text-center rounded-md text-white
+                  className={`${bgColor} flex items-center p-4 lg:p-6 justify-center text-center rounded-md text-neutral-800 dark:text-neutral-200
                 hover:bg-yellow-600 transition-colors min-h-[80px] lg:min-h-[100px]`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -616,7 +615,7 @@ const PatternsGame: React.FC = () => {
         {/* Feedback */}
         {gameState.feedback && (
           <motion.div
-            className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+            className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 40 }}
           >

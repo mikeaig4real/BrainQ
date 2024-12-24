@@ -241,7 +241,7 @@ const ChipsGame: React.FC = () => {
             <motion.div
               key={chip.id}
               className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 
-                     rounded-full flex items-center justify-center text-white text-lg font-bold pointer-events-none"
+                     rounded-full flex items-center justify-center text-neutral-800 dark:text-neutral-200 text-lg font-bold pointer-events-none"
               style={{ backgroundColor: chip.color }}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -263,7 +263,7 @@ const ChipsGame: React.FC = () => {
             <motion.div
               key={chip.id}
               className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 
-                     rounded-full flex items-center justify-center text-white text-lg font-bold pointer-events-none"
+                     rounded-full flex items-center justify-center text-neutral-800 dark:text-neutral-200 text-lg font-bold pointer-events-none"
               style={{ backgroundColor: chip.color }}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -276,7 +276,7 @@ const ChipsGame: React.FC = () => {
       {/* Feedback */}
       {gameState.feedback && (
         <motion.div
-          className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+          className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 40 }}
         >

@@ -248,7 +248,7 @@ const BouncingBallsGame = () => {
                     backgroundColor: ball.color,
                   }}
                 >
-                  <span className="text-white font-bold text-sm lg:text-base">
+                  <span className="text-neutral-800 dark:text-neutral-200 font-bold text-sm lg:text-base">
                     {ball.id}
                   </span>
                 </motion.div>
@@ -264,7 +264,7 @@ const BouncingBallsGame = () => {
               key={`${key}-${index}`}
               onClick={() => handleChoice(index)}
               className={`${bgColor} px-4 lg:px-6 py-2 lg:py-2
-                       text-base lg:text-lg text-white rounded-md 
+                       text-base lg:text-lg text-neutral-800 dark:text-neutral-200 rounded-md 
                        hover:opacity-90 transition-colors`}
               whileHover={{ scale: 1.02 }}
             >
@@ -277,7 +277,7 @@ const BouncingBallsGame = () => {
         {feedback && (
           <motion.div
             className="fixed top-4 sm:top-6 md:top-8 left-0 right-0 
-                     text-white text-xl sm:text-3xl md:text-6xl 
+                     text-neutral-800 dark:text-neutral-200 text-xl sm:text-3xl md:text-6xl 
                      font-bold text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 40 }}

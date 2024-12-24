@@ -290,9 +290,9 @@ const WordScrambleGame = () => {
   );
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
-  const [ previousScrambled, setPreviousScrambled ] = useState( "" ); // Add this state
-  
-  const inputRef = useRef<HTMLInputElement>( null );
+  const [previousScrambled, setPreviousScrambled] = useState(""); // Add this state
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleLevelProgression = () => {
     const settings = getGameSettings(level);
@@ -345,8 +345,8 @@ const WordScrambleGame = () => {
 
     setPreviousScrambled(scrambled);
     setScrambledWord(scrambled);
-    setUserInput( "" );
-    updateGameStats( { totalQuestions: 1 } );
+    setUserInput("");
+    updateGameStats({ totalQuestions: 1 });
     // focus on input so user can type without clicking on input
     inputRef.current && inputRef.current.focus();
   };
@@ -363,7 +363,7 @@ const WordScrambleGame = () => {
 
   // Handle submission
   const handleSubmit = () => {
-    const isCorrect = userInput.replace(/\s+/g, '') === currentWord;
+    const isCorrect = userInput.replace(/\s+/g, "") === currentWord;
 
     if (isCorrect) {
       updateGameStats({
@@ -421,7 +421,7 @@ const WordScrambleGame = () => {
           />
           <motion.button
             onClick={handleSubmit}
-            className={`${bgColor} w-full sm:w-auto px-6 sm:px-4 py-3 sm:py-4 text-lg sm:text-2xl text-white rounded-md`}
+            className={`${bgColor} w-full sm:w-auto px-6 sm:px-4 py-3 sm:py-4 text-lg sm:text-2xl text-neutral-800 dark:text-neutral-200 rounded-md`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -432,7 +432,7 @@ const WordScrambleGame = () => {
         {/* Feedback */}
         {feedback && (
           <motion.div
-            className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+            className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 40 }}
           >

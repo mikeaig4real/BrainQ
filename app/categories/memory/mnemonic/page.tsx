@@ -217,8 +217,7 @@ const MnemonicGame: React.FC = () => {
         setGamePhase("showing2");
       }, settings.displayTime);
     } else if (gamePhase === "showing2") {
-      timer = setTimeout( () =>
-      {
+      timer = setTimeout(() => {
         updateGameStats({ totalQuestions: 1 });
         setGamePhase("guessing");
       }, settings.displayTime);
@@ -252,8 +251,7 @@ const MnemonicGame: React.FC = () => {
         setWrongStreak(0);
 
         // Level up on reaching correctStreakLimit
-        if ( correctStreak + 1 >= settings.correctStreakLimit )
-        {
+        if (correctStreak + 1 >= settings.correctStreakLimit) {
           updateGameStats(
             { level: Math.min(level + 1, settings.maxLevel) },
             "set"
@@ -272,8 +270,7 @@ const MnemonicGame: React.FC = () => {
         if (
           wrongStreak + 1 >= settings.wrongStreakLimit &&
           level > settings.minLevel
-        )
-        {
+        ) {
           updateGameStats(
             { level: Math.max(level - 1, settings.minLevel) },
             "set"
@@ -316,7 +313,7 @@ const MnemonicGame: React.FC = () => {
             {wordData.group1?.map((word: string, index: number) => (
               <motion.button
                 key={index}
-                className="p-2 m-2 rounded-lg text-white font-bold text-sm lg:text-base break-words min-w-[90px]"
+                className="p-2 m-2 rounded-lg text-neutral-800 dark:text-neutral-200 font-bold text-sm lg:text-base break-words min-w-[90px]"
                 style={{ backgroundColor: GROUP_COLORS[group1Color] }}
               >
                 {word}
@@ -342,7 +339,7 @@ const MnemonicGame: React.FC = () => {
             {wordData.group2?.map((word: string, index: number) => (
               <motion.button
                 key={index}
-                className="p-2 m-2 rounded-lg text-white font-bold text-sm lg:text-base break-words min-w-[90px]"
+                className="p-2 m-2 rounded-lg text-neutral-800 dark:text-neutral-200 font-bold text-sm lg:text-base break-words min-w-[90px]"
                 style={{ backgroundColor: GROUP_COLORS[group2Color] }}
               >
                 {word}
@@ -365,7 +362,7 @@ const MnemonicGame: React.FC = () => {
             {getUniqueWords().map((word, index) => (
               <button
                 key={index}
-                className={`${bgColor} p-2 m-2 rounded-lg text-white font-bold text-sm lg:text-base break-words min-w-[90px] 
+                className={`${bgColor} p-2 m-2 rounded-lg text-neutral-800 dark:text-neutral-200 font-bold text-sm lg:text-base break-words min-w-[90px] 
                   ${selectedWords.includes(word) ? "opacity-50" : ""}`}
                 onClick={() => handleChoice(word)}
                 disabled={selectedWords.includes(word)}
@@ -379,7 +376,7 @@ const MnemonicGame: React.FC = () => {
 
       {feedback && (
         <motion.div
-          className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+          className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 40 }}
         >

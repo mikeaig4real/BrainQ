@@ -227,7 +227,7 @@ const FlashingNumbersGame = () => {
                 key={`${key}-${index}`}
                 onClick={() => handleChoice(index)}
                 className={`${bgColor} px-6 md:px-8 py-6 md:py-8 text-lg md:text-2xl 
-                     text-white rounded-md hover:opacity-90 transition-colors`}
+                     text-neutral-800 dark:text-neutral-200 rounded-md hover:opacity-90 transition-colors`}
                 whileHover={{ scale: 1.02 }}
               >
                 {option.join("  ")}
@@ -239,7 +239,7 @@ const FlashingNumbersGame = () => {
         {/* Feedback */}
         {feedback && (
           <motion.div
-            className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+            className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 40 }}
           >

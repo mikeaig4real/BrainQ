@@ -166,8 +166,7 @@ const IconSequenceGame: React.FC = () => {
 
     const settings = getGameSettings(level);
 
-    if ( iconId !== currentSequence[ userSequence.length ] )
-    {
+    if (iconId !== currentSequence[userSequence.length]) {
       updateGameStats({ totalQuestions: 1 });
       setFeedback("Wrong!");
       handleLevelChange(false);
@@ -183,8 +182,7 @@ const IconSequenceGame: React.FC = () => {
     setUserSequence(newUserSequence);
 
     // If sequence completed successfully
-    if ( newUserSequence.length === currentSequence.length )
-    {
+    if (newUserSequence.length === currentSequence.length) {
       updateGameStats({ totalQuestions: 1 });
       setFeedback("Good!");
       // Calculate points based on settings
@@ -255,7 +253,7 @@ const IconSequenceGame: React.FC = () => {
             <motion.button
               key={option.id}
               onClick={() => handleIconClick(option.id)}
-              className={`${bgColor} flex items-center p-2 justify-center text-center rounded-md text-white 
+              className={`${bgColor} flex items-center p-2 justify-center text-center rounded-md text-neutral-800 dark:text-neutral-200 
                 disabled:opacity-50`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -269,7 +267,7 @@ const IconSequenceGame: React.FC = () => {
         {/* Feedback */}
         {feedback && (
           <motion.div
-            className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+            className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 40 }}
           >

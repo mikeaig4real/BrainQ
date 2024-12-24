@@ -63,9 +63,7 @@ const StopwatchGame = () => {
     return () => clearInterval(interval);
   }, [isRunning, level]);
 
-  const handleResult = ( wasManualStop: boolean ) =>
-  {
-    
+  const handleResult = (wasManualStop: boolean) => {
     updateGameStats({ totalQuestions: 1 });
     const settings = getGameSettings(level);
     const difference = Math.abs(time - targetTime);
@@ -142,7 +140,7 @@ const StopwatchGame = () => {
       </div>
 
       {/* Target Time and Precision Info */}
-      <div className="text-3xl text-center mb-4 text-white">
+      <div className="text-3xl text-center mb-4 text-neutral-800 dark:text-neutral-200">
         <div>
           Target Time: <span className="font-bold">{targetTime}s </span>
         </div>
@@ -154,7 +152,7 @@ const StopwatchGame = () => {
       {/* Stop Button */}
       <button
         onClick={stopTimer}
-        className={`${bgColor} text-white px-12 py-4 rounded mt-4 text-2xl`}
+        className={`${bgColor} text-neutral-800 dark:text-neutral-200 px-12 py-4 rounded mt-4 text-2xl`}
       >
         Stop
       </button>
@@ -162,7 +160,7 @@ const StopwatchGame = () => {
       {/* Feedback */}
       {feedback && (
         <motion.div
-          className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+          className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
           initial={{ opacity: 0, y: -20 }} // Changed from y: 20 to y: -20
           animate={{ opacity: 1, y: 40 }}
         >

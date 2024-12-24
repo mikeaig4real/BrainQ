@@ -8,6 +8,7 @@ import outputs from "@/amplify_outputs.json";
 import { GameProvider } from "@/contexts/GameContext";
 import { Audiowide } from "next/font/google";
 import { Authenticator } from "@aws-amplify/ui-react";
+import { ThemeProvider } from "next-themes";
 
 const audiowide = Audiowide({ subsets: ["latin"], weight: ["400"] });
 
@@ -21,11 +22,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html data-theme="dark" className={`${audiowide.className} tracking-widest`} lang="en">
-      <body className="flex items-center justify-center min-h-screen bg-base-200">
+    <html
+      data-theme="dark"
+      className={`${audiowide.className} tracking-widest`}
+      lang="en"
+    >
+      <body className="flex items-center justify-center min-h-screen bg-base-200 text-neutral-800 dark:text-neutral-200">
         <Authenticator.Provider>
           <GameProvider>
-            <DeviceWrapperComponent>{children}</DeviceWrapperComponent>
+            <ThemeProvider attribute="class" defaultTheme="dark">
+              <DeviceWrapperComponent>{children}</DeviceWrapperComponent>
+            </ThemeProvider>
           </GameProvider>
         </Authenticator.Provider>
       </body>

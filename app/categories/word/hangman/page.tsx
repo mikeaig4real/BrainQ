@@ -702,7 +702,7 @@ const HangmanGame = () => {
         <button
           onClick={handleHint}
           disabled={gameState.remainingHints <= 0 || gameState.isWordComplete}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 text-sm rounded-sm absolute left-0 bottom-[-2rem]"
+          className="bg-orange-500 hover:bg-orange-600 text-neutral-800 dark:text-neutral-200 px-2 py-1 text-sm rounded-sm absolute left-0 bottom-[-2rem]"
         >
           Use Hint ({gameState.remainingHints})
         </button>
@@ -734,7 +734,7 @@ const HangmanGame = () => {
           <motion.button
             key={letter}
             onClick={() => handleGuess(letter)}
-            className={`sm:px-4 sm:py-2 p-2  text-white rounded-md ${
+            className={`sm:px-4 sm:py-2 p-2  text-neutral-800 dark:text-neutral-200 rounded-md ${
               gameState.guessedLetters.includes(letter)
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-orange-500 hover:bg-orange-600"
@@ -751,7 +751,7 @@ const HangmanGame = () => {
       {gameState.feedback && (
         <motion.div
           className="fixed top-4 sm:top-6 md:top-8 left-0 right-0 
-                     text-white text-xl sm:text-3xl 
+                     text-neutral-800 dark:text-neutral-200 text-xl sm:text-3xl 
                      font-bold text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 40 }}

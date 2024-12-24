@@ -14,18 +14,18 @@ const IconWrapper: React.FC<IconProps> = ({
   label = "",
   showLabel = true,
   bgColor = "",
-  sizing = "sm:w-14 sm:h-14 w-8 h-8"
+  sizing = "sm:w-14 sm:h-14 w-8 h-8",
 }) => {
   return (
     <div
       className={`${sizing} rounded-full ${bgColor} flex items-center justify-center relative cursor-pointer p-2`}
     >
       {showLabel && (
-        <span className="text-xl text-white absolute bottom-[-1.5rem] font-bold">
+        <span className="text-xl text-neutral-800 dark:text-neutral-200 absolute bottom-[-1.5rem] font-bold">
           {label}
         </span>
       )}
-      <IconComponent className="w-full h-full text-white" />
+      <IconComponent className="w-full h-full text-neutral-800 dark:text-neutral-200" />
     </div>
   );
 };

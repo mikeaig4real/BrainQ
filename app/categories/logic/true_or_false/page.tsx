@@ -662,7 +662,9 @@ const getDifficultyFromLevel = (level: number): Difficulty => {
 const TrueOrFalseGame = () => {
   const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [feedback, setFeedback] = useState<string>("");
-  const [level, setLevel] = useState(gameSession?.[categoryIndex]?.test?.level || 1);
+  const [level, setLevel] = useState(
+    gameSession?.[categoryIndex]?.test?.level || 1
+  );
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [question, setQuestion] = useState<Question>({
@@ -687,7 +689,7 @@ const TrueOrFalseGame = () => {
       const randomIndex = Math.floor(Math.random() * questions.length);
       const randomQuestion = questions[randomIndex];
       setUsedQuestions(new Set([randomIndex]));
-      setQuestion( randomQuestion );
+      setQuestion(randomQuestion);
       updateGameStats({ totalQuestions: 1 });
       return;
     }
@@ -786,7 +788,7 @@ const TrueOrFalseGame = () => {
 
           {/* Final Statement */}
           <motion.p
-            className="text-white font-semibold my-4 md:my-6 text-lg sm:text-2xl md:text-3xl bg-yellow-800 py-2 px-4 rounded-md break-words"
+            className="text-neutral-800 dark:text-neutral-200 font-semibold my-4 md:my-6 text-lg sm:text-2xl md:text-3xl bg-yellow-800 py-2 px-4 rounded-md break-words"
             whileHover={{ scale: 1.02 }}
           >
             Therefore: {question.finalStatement}... ?
@@ -802,7 +804,7 @@ const TrueOrFalseGame = () => {
             True
           </button>
           <button
-            className="bg-black px-4 md:px-6 py-2 md:py-3 text-base md:text-xl text-white rounded-md border-yellow-500 border hover:bg-gray-900 transition-colors"
+            className="bg-black px-4 md:px-6 py-2 md:py-3 text-base md:text-xl text-neutral-800 dark:text-neutral-200 rounded-md border-yellow-500 border hover:bg-gray-900 transition-colors"
             onClick={() => handleChoice(false)}
           >
             False
@@ -812,7 +814,7 @@ const TrueOrFalseGame = () => {
         {/* Feedback */}
         {feedback && (
           <motion.div
-            className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+            className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
             initial={{ opacity: 0, y: -20 }} // Changed from y: 20 to y: -20
             animate={{ opacity: 1, y: 40 }}
           >

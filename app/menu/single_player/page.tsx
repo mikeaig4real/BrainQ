@@ -8,7 +8,8 @@ import { IconType } from "react-icons";
 import IconWrapper from "@/components/IconWrapper";
 
 const SinglePlayerPage = (): JSX.Element => {
-  const { categoryIndex, setGameIndex, gameSession, setTest, allowClicks } = useGame();
+  const { categoryIndex, setGameIndex, gameSession, setTest, allowClicks } =
+    useGame();
   const [randomTest, setRandomTest] = useState(
     categories[categoryIndex]?.tests?.[0]
   );
@@ -28,8 +29,10 @@ const SinglePlayerPage = (): JSX.Element => {
       session?.[categoryIndex].started &&
       !session?.[categoryIndex].ended
     )
-      return ( session?.[ categoryIndex ]?.test?.id || 1 ) - 1;
-    return Math.floor(Math.random() * categories?.[categoryIndex]?.tests?.length);
+      return (session?.[categoryIndex]?.test?.id || 1) - 1;
+    return Math.floor(
+      Math.random() * categories?.[categoryIndex]?.tests?.length
+    );
   };
 
   useEffect(() => {
@@ -53,7 +56,8 @@ const SinglePlayerPage = (): JSX.Element => {
 
   const getGameDivColor = () => {
     const { started, ended } = gameSession[categoryIndex];
-    if (!ended && allowClicks) return `${categories[categoryIndex].bgColor} cursor-pointer`;
+    if (!ended && allowClicks)
+      return `${categories[categoryIndex].bgColor} cursor-pointer`;
     return "bg-gray-500 cursor-not-allowed";
   };
 
@@ -98,9 +102,11 @@ const SinglePlayerPage = (): JSX.Element => {
           handleGameClick();
         }}
       >
-        <p className="text-white text-lg pr-8">{randomTest.description}</p>
+        <p className="text-neutral-800 dark:text-neutral-200 text-lg pr-8">
+          {randomTest.description}
+        </p>
         <svg
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-white"
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-neutral-800 dark:text-neutral-200"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

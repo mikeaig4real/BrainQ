@@ -60,7 +60,7 @@ const ComingSoon = () => {
             color: "rgba(255, 255, 255, 0.7)",
           }}
         >
-          <FaSnowflake className="text-white/30 text-sm" />
+          <FaSnowflake className="text-neutral-800 dark:text-neutral-200/30 text-sm" />
         </motion.div>
       ))}
 
@@ -82,7 +82,7 @@ const ComingSoon = () => {
 
         {/* Coming Soon Text */}
         <motion.h1
-          className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-wider"
+          className="text-4xl md:text-6xl font-bold text-neutral-800 dark:text-neutral-200 mb-4 tracking-wider"
           style={{ textShadow: "0 0 10px rgba(255,255,255,0.5)" }}
         >
           Coming Soon...

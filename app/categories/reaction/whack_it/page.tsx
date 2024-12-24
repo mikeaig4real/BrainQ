@@ -141,7 +141,7 @@ const WhackAMoleGame: React.FC = () => {
                   exit={{ scale: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <FaRat className="text-white text-4xl" />
+                  <FaRat className="text-neutral-800 dark:text-neutral-200 text-4xl" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -152,7 +152,7 @@ const WhackAMoleGame: React.FC = () => {
       {/* Feedback */}
       {feedback && (
         <motion.div
-          className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+          className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 40 }}
           exit={{ opacity: 0 }}

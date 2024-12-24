@@ -40,7 +40,9 @@ const ArithmeticGame: React.FC = () => {
   const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [feedback, setFeedback] = useState<string>("");
   const [level, setLevel] = useState(1);
-  const [correctStreak, setCorrectStreak] = useState(gameSession?.[categoryIndex]?.test?.level || 1);
+  const [correctStreak, setCorrectStreak] = useState(
+    gameSession?.[categoryIndex]?.test?.level || 1
+  );
   const [wrongStreak, setWrongStreak] = useState(0);
   const [question, setQuestion] = useState<Question>({
     num1: 0,
@@ -302,7 +304,7 @@ const ArithmeticGame: React.FC = () => {
         {question.choices.map((choice, index) => (
           <button
             key={index}
-            className="bg-red-500 w-full text-2xl text-white rounded-md py-2"
+            className="bg-red-500 w-full text-2xl text-neutral-800 dark:text-neutral-200 rounded-md py-2"
             onClick={() => handleChoice(choice)}
           >
             {choice}
@@ -313,7 +315,7 @@ const ArithmeticGame: React.FC = () => {
       {/* Feedback */}
       {feedback && (
         <motion.div
-          className="fixed top-8 left-0 right-0 text-white text-2xl md:text-6xl font-bold text-center"
+          className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 40 }}
         >
