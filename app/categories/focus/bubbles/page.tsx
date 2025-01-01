@@ -2,42 +2,21 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/contexts/GameContext";
-
-interface BouncingBallsQuestion {
-  balls: Ball[];
-  options: number[];
-  correctOptionIndex: number;
-}
-
-interface Ball {
-  id: number;
-  maxHeight: number;
-  color: string;
-  initialHeight: number;
-}
-
-const bgColor = "bg-green-500";
-
-const getGameSettings = ( level: number ) =>
-{
-  const ballCount = Math.min(4 + Math.floor(level / 2), 8); // 4 to 8 balls
-  return {
-    correctStreakLimit: 3,
-    wrongStreakLimit: 2,
-    basePoints: 1,
-    levelMultiplier: level,
-    maxLevel: 6,
-    minLevel: 1,
-    ballCount,
-    heightVariation: Math.max(100 - level * 10, 20), // Difference between heights decreases with level
-    optionsCount: ballCount,
-  };
-};
+import {
+  BouncingBallsQuestion,
+  bgColor,
+  getGameSettings,
+  generateBalls,
+  generateOptions,
+} from "./testTypeData";
 
 const BouncingBallsGame = () => {
   const { updateGameStats, gameSession, categoryIndex } = useGame();
-  const [feedback, setFeedback] = useState<string>("");
-  const [level, setLevel] = useState(gameSession?.[categoryIndex]?.test?.level || 1);
+  const [ feedback, setFeedback ] = useState<string>( "" );
+  const [canClick, setCanClick] = useState(true);
+  const [level, setLevel] = useState(
+    gameSession?.[categoryIndex]?.test?.level || 1
+  );
   const [correctStreak, setCorrectStreak] = useState(0);
   const [wrongStreak, setWrongStreak] = useState(0);
   const [question, setQuestion] = useState<BouncingBallsQuestion>({
@@ -50,62 +29,9 @@ const BouncingBallsGame = () => {
     undefined
   );
 
-  const generateRandomColor = () => {
-    const hue = Math.floor(Math.random() * 360);
-    return `hsl(${hue}, 70%, 50%)`;
-  };
-
-  const generateBalls = (
-    settings: ReturnType<typeof getGameSettings>
-  ): Ball[] => {
-    const balls: Ball[] = [];
-    const baseHeight =
-      window.innerWidth < 640
-        ? 80
-        : window.innerWidth < 768
-        ? 110
-        : 150 + Math.random() * 100;
-
-    for (let i = 0; i < settings.ballCount; i++) {
-      balls.push({
-        id: i + 1,
-        maxHeight: baseHeight + Math.random() * settings.heightVariation,
-        initialHeight: Math.random() * 300,
-        color: generateRandomColor(),
-      });
-    }
-    return balls;
-  };
-
-  const generateOptions = (
-    balls: Ball[],
-    settings: ReturnType<typeof getGameSettings>,
-    lastCorrectIndex?: number
-  ): { options: number[]; correctOptionIndex: number } => {
-    // Find the ball that bounces the highest
-    const highestBall = balls.reduce((prev, current) =>
-      current.maxHeight > prev.maxHeight ? current : prev
-    );
-
-    // Since we want all balls as options, we can simply use all ball IDs
-    const options = balls.map((ball) => ball.id);
-
-    // Shuffle options
-    let shuffledOptions;
-    let correctOptionIndex;
-    do {
-      shuffledOptions = [...options].sort(() => Math.random() - 0.5);
-      correctOptionIndex = shuffledOptions.indexOf(highestBall.id);
-    } while (
-      lastCorrectIndex !== undefined &&
-      correctOptionIndex === lastCorrectIndex
-    );
-
-    return { options: shuffledOptions, correctOptionIndex };
-  };
-
-
-  const generateQuestion = (): void => {
+  const generateQuestion = (): void =>
+  {
+    setCanClick( true );
     const settings = getGameSettings(level);
     const balls = generateBalls(settings);
     const { options, correctOptionIndex } = generateOptions(
@@ -124,7 +50,10 @@ const BouncingBallsGame = () => {
   };
 
   // Replace the handleChoice function with this corrected version
-  const handleChoice = (optionIndex: number): void => {
+  const handleChoice = ( optionIndex: number ): void =>
+  {
+    if ( !canClick ) return;
+    setCanClick( false );
     const settings = getGameSettings(level);
     const selectedBallId = question.options[optionIndex];
 
@@ -136,7 +65,6 @@ const BouncingBallsGame = () => {
     const isCorrect = selectedBallId === highestBall.id;
 
     if (isCorrect) {
-      const points = settings.basePoints * settings.levelMultiplier;
       updateGameStats({ totalCorrect: 1 });
       setFeedback("Good!");
       setCorrectStreak((prev) => prev + 1);
@@ -196,8 +124,8 @@ const BouncingBallsGame = () => {
       <div className="flex flex-col gap-2 lg:gap-4 w-full max-w-xl mx-auto">
         {/* Game Container - adjust height based on screen size */}
         <div
-          className="relative w-full h-[250px] lg:h-[300px]
-                     border-b-4 border-green-500 rounded-lg mb-4 lg:mb-8"
+          aria-label="Bouncing balls game area"
+          className="relative w-full h-[250px] lg:h-[300px] border-b-4 border-green-500 rounded-lg mb-4 lg:mb-8"
         >
           <AnimatePresence>
             {question.balls.map((ball) => {
@@ -209,6 +137,7 @@ const BouncingBallsGame = () => {
 
               return (
                 <motion.div
+                  aria-label={`Bouncing ball ${ball.id} with height ${ball.maxHeight}`}
                   key={`${key}-${ball.id}`}
                   initial={{ y: 0, scale: 0 }}
                   animate={{
@@ -241,8 +170,7 @@ const BouncingBallsGame = () => {
                       delay: delay,
                     },
                   }}
-                  className="absolute bottom-0 w-6 h-6 lg:w-10 lg:h-10
-                           rounded-full flex items-center justify-center"
+                  className="absolute bottom-0 w-6 h-6 lg:w-10 lg:h-10 rounded-full flex items-center justify-center"
                   style={{
                     left: `${(ball.id - 1) * (100 / question.balls.length)}%`,
                     backgroundColor: ball.color,
@@ -261,11 +189,14 @@ const BouncingBallsGame = () => {
         <div className="grid grid-cols-2 gap-2 lg:gap-4">
           {question.options.map((option, index) => (
             <motion.button
+              aria-label={`Select ball number ${option}`}
               key={`${key}-${index}`}
-              onClick={() => handleChoice(index)}
-              className={`${bgColor} px-4 lg:px-6 py-2 lg:py-2
-                       text-base lg:text-lg text-neutral-800 dark:text-neutral-200 rounded-md 
-                       hover:opacity-90 transition-colors`}
+              onClick={ () =>
+              {
+                if (!canClick) return;
+                handleChoice(index)
+              }}
+              className={`${bgColor} px-4 lg:px-6 py-2 lg:py-2 text-base lg:text-lg text-neutral-800 dark:text-neutral-200 rounded-md hover:opacity-90 transition-colors`}
               whileHover={{ scale: 1.02 }}
             >
               {option}
@@ -276,9 +207,8 @@ const BouncingBallsGame = () => {
         {/* Feedback - adjust text size based on screen size */}
         {feedback && (
           <motion.div
-            className="fixed top-4 sm:top-6 md:top-8 left-0 right-0 
-                     text-neutral-800 dark:text-neutral-200 text-xl sm:text-3xl md:text-6xl 
-                     font-bold text-center"
+            aria-live="polite"
+            className="fixed top-4 sm:top-6 md:top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-xl sm:text-3xl md:text-6xl font-bold text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 40 }}
           >

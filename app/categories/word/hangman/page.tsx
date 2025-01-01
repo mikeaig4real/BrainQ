@@ -2,386 +2,13 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/contexts/GameContext";
-
-const wordCategories = {
-  programming: {
-    easy: [
-      "python",
-      "coding",
-      "script",
-      "arrays",
-      "loops",
-      "string",
-      "input",
-      "print",
-      "class",
-      "logic",
-      "debug",
-      "float",
-      "const",
-      "break",
-      "while",
-      "scope",
-      "stack",
-      "queue",
-      "files",
-      "parse",
-      "cache",
-      "data",
-      "build",
-      "tests",
-      "error",
-    ],
-    medium: [
-      "javascript",
-      "typescript",
-      "framework",
-      "debugging",
-      "database",
-      "function",
-      "variable",
-      "compiler",
-      "iterator",
-      "promise",
-      "callback",
-      "boolean",
-      "interface",
-      "package",
-      "module",
-      "template",
-      "protocol",
-      "pointer",
-      "runtime",
-      "library",
-      "platform",
-      "backend",
-      "frontend",
-      "reactive",
-      "storage",
-    ],
-    hard: [
-      "authentication",
-      "serialization",
-      "implementation",
-      "documentation",
-      "asynchronous",
-      "optimization",
-      "encapsulation",
-      "inheritance",
-      "polymorphism",
-      "abstraction",
-      "middleware",
-      "dependency",
-      "configuration",
-      "architecture",
-      "microservice",
-      "deployment",
-      "orchestration",
-      "virtualization",
-      "encryption",
-      "persistence",
-      "scalability",
-      "transaction",
-      "distributed",
-      "integration",
-    ],
-  },
-  animals: {
-    easy: [
-      "monkey",
-      "rabbit",
-      "turtle",
-      "penguin",
-      "panda",
-      "koala",
-      "tiger",
-      "zebra",
-      "eagle",
-      "snake",
-      "horse",
-      "sheep",
-      "camel",
-      "whale",
-      "shark",
-      "mouse",
-      "puppy",
-      "kitten",
-      "birds",
-      "duck",
-      "goose",
-      "fish",
-      "bear",
-      "deer",
-      "wolf",
-    ],
-    medium: [
-      "elephant",
-      "crocodile",
-      "kangaroo",
-      "dolphin",
-      "octopus",
-      "giraffe",
-      "panther",
-      "buffalo",
-      "gorilla",
-      "leopard",
-      "ostrich",
-      "peacock",
-      "hamster",
-      "raccoon",
-      "squirrel",
-      "antelope",
-      "jaguar",
-      "walrus",
-      "platypus",
-      "hedgehog",
-      "flamingo",
-      "penguin",
-      "meerkat",
-      "tortoise",
-      "pelican",
-    ],
-    hard: [
-      "hippopotamus",
-      "rhinoceros",
-      "chimpanzee",
-      "orangutan",
-      "pterodactyl",
-      "tyrannosaurus",
-      "velociraptor",
-      "stegosaurus",
-      "triceratops",
-      "brachiosaurus",
-      "archaeopteryx",
-      "ankylosaurus",
-      "parasaurolophus",
-      "diplodocus",
-      "allosaurus",
-      "megalosaurus",
-      "ichthyosaurus",
-      "plesiosaurus",
-      "dimetrodon",
-      "spinosaurus",
-      "giganotosaurus",
-      "carnotaurus",
-      "pachycephalosaurus",
-      "chasmosaurus",
-    ],
-  },
-  countries: {
-    easy: [
-      "spain",
-      "japan",
-      "italy",
-      "france",
-      "china",
-      "india",
-      "brazil",
-      "egypt",
-      "chile",
-      "cuba",
-      "ghana",
-      "kenya",
-      "nepal",
-      "peru",
-      "qatar",
-      "sudan",
-      "syria",
-      "togo",
-      "yemen",
-      "wales",
-      "haiti",
-      "libya",
-      "malta",
-      "niger",
-      "oman",
-    ],
-    medium: [
-      "australia",
-      "argentina",
-      "portugal",
-      "thailand",
-      "germany",
-      "malaysia",
-      "pakistan",
-      "singapore",
-      "vietnam",
-      "belgium",
-      "colombia",
-      "denmark",
-      "ethiopia",
-      "finland",
-      "hungary",
-      "indonesia",
-      "jamaica",
-      "morocco",
-      "norway",
-      "philippines",
-      "romania",
-      "slovakia",
-      "tanzania",
-      "uruguay",
-      "zimbabwe",
-    ],
-    hard: [
-      "switzerland",
-      "netherlands",
-      "kazakhstan",
-      "madagascar",
-      "afghanistan",
-      "azerbaijan",
-      "bangladesh",
-      "cameroon",
-      "democratic",
-      "guatemala",
-      "kyrgyzstan",
-      "luxembourg",
-      "mauritania",
-      "mozambique",
-      "nicaragua",
-      "tajikistan",
-      "uzbekistan",
-      "venezuela",
-      "yugoslavia",
-      "turkmenistan",
-      "liechtenstein",
-      "azerbaijan",
-      "bangladesh",
-      "mauritius",
-    ],
-  },
-  sports: {
-    easy: [
-      "rugby",
-      "tennis",
-      "soccer",
-      "golf",
-      "polo",
-      "judo",
-      "swim",
-      "surf",
-      "bike",
-      "run",
-      "jump",
-      "skip",
-      "dive",
-      "bowl",
-      "fish",
-      "sail",
-      "ski",
-      "box",
-      "race",
-      "dart",
-      "lift",
-      "shoot",
-      "fence",
-      "climb",
-      "row",
-    ],
-    medium: [
-      "baseball",
-      "volleyball",
-      "basketball",
-      "cricket",
-      "football",
-      "handball",
-      "hockey",
-      "cycling",
-      "archery",
-      "bowling",
-      "curling",
-      "fencing",
-      "rowing",
-      "skating",
-      "diving",
-      "wrestling",
-      "triathlon",
-      "badminton",
-      "canoeing",
-      "karate",
-      "lacrosse",
-      "netball",
-      "softball",
-      "squash",
-      "taekwondo",
-    ],
-    hard: [
-      "skateboarding",
-      "weightlifting",
-      "parasailing",
-      "mountaineering",
-      "snowboarding",
-      "windsurfing",
-      "waterpolo",
-      "gymnastics",
-      "equestrian",
-      "pentathlon",
-      "powerlifting",
-      "racquetball",
-      "trampolining",
-      "wakeboarding",
-      "bodybuilding",
-      "cheerleading",
-      "paddleboarding",
-      "rockclimbing",
-      "rollerblading",
-      "iceskating",
-      "synchronized",
-      "orienteering",
-      "kiteboarding",
-      "longboarding",
-    ],
-  },
-};
-
-interface GameSettings {
-  correctStreakLimit: number;
-  wrongStreakLimit: number;
-  basePoints: number;
-  levelMultiplier: number;
-  maxLevel: number;
-  minLevel: number;
-  lives: number;
-  timeLimit: number;
-  hintCount: number; // Add this new property
-}
-
-interface GameState {
-  lives: number;
-  totalLives: number;
-  selectedWord: string;
-  currentCategory: string;
-  guessedLetters: string[];
-  feedback: string;
-  level: number;
-  correctStreak: number;
-  wrongStreak: number;
-  usedWords: Set<string>;
-  gameInitialized: boolean;
-  isWordComplete: boolean;
-  remainingHints: number;
-  revealedHints: number[];
-}
-
-const getGameSettings = (level: number): GameSettings => {
-  return {
-    correctStreakLimit: 3,
-    wrongStreakLimit: 2,
-    basePoints: 1,
-    levelMultiplier: level,
-    maxLevel: 6,
-    minLevel: 1,
-    lives: Math.max(7 - Math.floor(level / 2), 4),
-    timeLimit: Math.max(90 - level * 10, 30),
-    hintCount: Math.min(2 + Math.floor(level / 2), 5), // Starts at 3, increases with level, caps at 7
-  };
-};
-
-const getDifficulty = (level: number): "easy" | "medium" | "hard" => {
-  if (level <= 2) return "easy";
-  if (level <= 4) return "medium";
-  return "hard";
-};
+import {
+  wordCategories,
+  GameSettings,
+  GameState,
+  getGameSettings,
+  getDifficulty,
+} from "./testTypeData";
 
 const HangmanGame = () => {
   const { updateGameStats, gameSession, categoryIndex } = useGame();
@@ -685,23 +312,41 @@ const HangmanGame = () => {
     ];
 
     return (
-      <svg width="160" height="160">
+      <svg
+        role="img"
+        aria-label={`Hangman drawing. ${remainingLives} lives remaining out of ${totalLives}`}
+        width="160"
+        height="160"
+      >
         {remainingLives === 0 ? parts : parts.slice(0, wrongGuesses)}
       </svg>
     );
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 mt-16">
+    <div
+      role="region"
+      aria-label="Hangman game"
+      className="flex flex-col items-center gap-4 mt-16"
+    >
       {/* Game Header */}
-      <div className="text-center relative">
-        <p className="text-lg text-orange-500">Lives : {gameState.lives}</p>
-        <p className="text-lg text-orange-500">
+      <div role="status" aria-live="polite" className="text-center relative">
+        <p
+          aria-label={`Lives remaining: ${gameState.lives}`}
+          className="text-lg text-orange-500"
+        >
+          Lives : {gameState.lives}
+        </p>
+        <p
+          aria-label={`Current category: ${gameState.currentCategory}`}
+          className="text-lg text-orange-500"
+        >
           Category: {gameState.currentCategory}
         </p>
         <button
           onClick={handleHint}
           disabled={gameState.remainingHints <= 0 || gameState.isWordComplete}
+          aria-label={`Use hint. ${gameState.remainingHints} hints remaining`}
           className="bg-orange-500 hover:bg-orange-600 text-neutral-800 dark:text-neutral-200 px-2 py-1 text-sm rounded-sm absolute left-0 bottom-[-2rem]"
         >
           Use Hint ({gameState.remainingHints})
@@ -720,6 +365,7 @@ const HangmanGame = () => {
           {gameState.selectedWord.split("").map((letter, index) => (
             <span
               key={index}
+              aria-label="Word to guess"
               className="w-8 h-8 flex items-center justify-center border-b-2 border-gray-400"
             >
               {gameState.guessedLetters.includes(letter) ? letter : "_"}
@@ -741,6 +387,12 @@ const HangmanGame = () => {
             }`}
             disabled={gameState.guessedLetters.includes(letter)}
             whileHover={{ scale: 1.1 }}
+            aria-label={`Guess letter ${letter}${
+              gameState.guessedLetters.includes(letter)
+                ? ", already guessed"
+                : ""
+            }`}
+            aria-pressed={gameState.guessedLetters.includes(letter)}
           >
             {letter.toUpperCase()}
           </motion.button>
@@ -750,11 +402,11 @@ const HangmanGame = () => {
       {/* Feedback - adjust text size based on screen size */}
       {gameState.feedback && (
         <motion.div
-          className="fixed top-4 sm:top-6 md:top-8 left-0 right-0 
-                     text-neutral-800 dark:text-neutral-200 text-xl sm:text-3xl 
-                     font-bold text-center"
+          className="fixed top-4 sm:top-6 md:top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-xl sm:text-3xl font-bold text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 40 }}
+          role="alert"
+          aria-live="polite"
         >
           {gameState.feedback}
         </motion.div>

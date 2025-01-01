@@ -2,43 +2,12 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useGame } from "@/contexts/GameContext";
-
-interface Question {
-  num1: number;
-  num2: number;
-  operator: string;
-  equation: (string | number)[];
-  choices: (string | number)[];
-  missingElement: string;
-  result: number;
-}
-
-const getGameSettings = (level: number) => {
-  return {
-    correctStreakLimit: 2, // Correct answers needed for level up
-    wrongStreakLimit: 2, // Wrong answers before level down
-    basePoints: 1, // Single base point value
-    levelMultiplier: level,
-    maxLevel: 6,
-    minLevel: 1,
-    numberRange: {
-      min: Math.max(3, Math.floor(level / 3) * 10),
-      max: Math.min(10 + level * 15, 200),
-    },
-    operators:
-      level <= 2
-        ? ["+", "-"]
-        : level <= 4
-        ? ["+", "-", "*"]
-        : ["+", "-", "*", "/"],
-    choiceCount: Math.min(4 + Math.floor(level / 3), 6),
-    timeLimit: Math.max(10000 - level * 500, 5000),
-  };
-};
+import { Question, getGameSettings } from "./testTypeData";
 
 const ArithmeticGame: React.FC = () => {
   const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [feedback, setFeedback] = useState<string>("");
+  const [canClick, setCanClick] = useState(true);
   const [level, setLevel] = useState(1);
   const [correctStreak, setCorrectStreak] = useState(
     gameSession?.[categoryIndex]?.test?.level || 1
@@ -55,7 +24,9 @@ const ArithmeticGame: React.FC = () => {
   });
 
   // Then update the generateQuestion function to use the new number ranges
-  const generateQuestion = (): void => {
+  const generateQuestion = (): void =>
+  {
+    setCanClick(true);
     const settings = getGameSettings(level);
 
     // Helper function to generate number within range, excluding small numbers
@@ -202,7 +173,10 @@ const ArithmeticGame: React.FC = () => {
   };
 
   // Modify the handleChoice function:
-  const handleChoice = (choice: string | number): void => {
+  const handleChoice = ( choice: string | number ): void =>
+  {
+    if (!canClick) return; // Prevent multiple clicks
+    setCanClick(false); // Disable clicks until the next question is generated
     const settings = getGameSettings(level);
     const { num1, num2, result } = question;
     const missingIndex: number = question.equation.indexOf("?");
@@ -305,7 +279,11 @@ const ArithmeticGame: React.FC = () => {
           <button
             key={index}
             className="bg-red-500 w-full text-2xl text-neutral-800 dark:text-neutral-200 rounded-md py-2"
-            onClick={() => handleChoice(choice)}
+            onClick={ () =>
+            {
+              if (!canClick) return;
+              handleChoice(choice);
+            }}
           >
             {choice}
           </button>

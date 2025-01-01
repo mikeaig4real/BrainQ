@@ -2,288 +2,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useGame } from "@/contexts/GameContext";
-
-const bgColor = "bg-orange-500";
-
-const wordPools = {
-  easy: [
-    "apple",
-    "beach",
-    "chair",
-    "dance",
-    "eagle",
-    "flame",
-    "grape",
-    "heart",
-    "image",
-    "juice",
-    "kite",
-    "lemon",
-    "music",
-    "north",
-    "ocean",
-    "paint",
-    "queen",
-    "river",
-    "smile",
-    "table",
-    "uncle",
-    "voice",
-    "water",
-    "youth",
-    "zebra",
-    "bread",
-    "cloud",
-    "dream",
-    "flash",
-    "green",
-    "honey",
-    "ivory",
-    "jumbo",
-    "knife",
-    "light",
-    "money",
-    "nurse",
-    "paper",
-    "quiet",
-    "radio",
-    "snake",
-    "tiger",
-    "umbrella",
-    "video",
-    "whale",
-    "amber",
-    "brick",
-    "candy",
-    "daisy",
-    "earth",
-    "fairy",
-    "glass",
-    "happy",
-    "index",
-    "jelly",
-    "lunar",
-    "magic",
-    "noble",
-    "olive",
-    "pearl",
-    "quilt",
-    "royal",
-    "sugar",
-    "tulip",
-    "urban",
-    "vault",
-    "wagon",
-    "xenon",
-    "yacht",
-    "zesty",
-  ],
-  medium: [
-    "balloon",
-    "captain",
-    "diamond",
-    "elephant",
-    "factory",
-    "garden",
-    "harmony",
-    "island",
-    "journey",
-    "kitchen",
-    "library",
-    "machine",
-    "network",
-    "octopus",
-    "penguin",
-    "quality",
-    "rainbow",
-    "science",
-    "thunder",
-    "uniform",
-    "village",
-    "warrior",
-    "crystal",
-    "dolphin",
-    "eclipse",
-    "falcon",
-    "glacier",
-    "horizon",
-    "ignite",
-    "jasmine",
-    "kangaroo",
-    "leopard",
-    "mineral",
-    "neutron",
-    "orchids",
-    "phoenix",
-    "quantum",
-    "raccoon",
-    "sapphire",
-    "tornado",
-    "unicorn",
-    "volcano",
-    "walrus",
-    "xylophone",
-    "yogurt",
-    "zephyr",
-    "bamboo",
-    "cascade",
-    "dazzle",
-    "emerald",
-    "flamingo",
-    "gazelle",
-    "harvest",
-    "impulse",
-    "jaguar",
-    "koala",
-    "lantern",
-    "mammoth",
-    "nebula",
-    "ocelot",
-    "panther",
-    "quasar",
-    "reptile",
-    "scarlet",
-    "textile",
-    "upgrade",
-    "velvet",
-    "whisper",
-    "yonder",
-    "zenith",
-  ],
-  hard: [
-    "adventure",
-    "beautiful",
-    "challenge",
-    "discovery",
-    "education",
-    "fountain",
-    "grateful",
-    "heritage",
-    "industry",
-    "junction",
-    "knowledge",
-    "language",
-    "mountain",
-    "navigate",
-    "obstacle",
-    "paradise",
-    "question",
-    "resource",
-    "schedule",
-    "treasure",
-    "universe",
-    "valuable",
-    "warranty",
-    "abstract",
-    "backbone",
-    "calendar",
-    "database",
-    "elephant",
-    "festival",
-    "geometry",
-    "harmonic",
-    "infinite",
-    "judgment",
-    "keyboard",
-    "leverage",
-    "magnetic",
-    "nitrogen",
-    "operator",
-    "platinum",
-    "quadrant",
-    "relative",
-    "sequence",
-    "terminal",
-    "ultimate",
-    "vacation",
-    "wavelength",
-    "yearbook",
-    "zoology",
-    "academic",
-    "baseline",
-    "capacity",
-    "deadline",
-    "engineer",
-    "feedback",
-    "graphics",
-    "hardware",
-    "imperial",
-    "junction",
-    "kinetics",
-    "leverage",
-    "molecule",
-    "notebook",
-    "optimize",
-    "protocol",
-    "quantity",
-    "research",
-    "software",
-    "template",
-    "upgrade",
-    "validate",
-    "wireless",
-    "accelerate",
-    "benchmark",
-    "calculate",
-    "dashboard",
-    "elaborate",
-    "framework",
-    "generate",
-    "highlight",
-    "implement",
-    "junction",
-    "keyboard",
-    "landscape",
-    "mechanism",
-    "normalize",
-    "optimize",
-    "parameter",
-    "qualified",
-    "reference",
-    "structure",
-    "technical",
-    "underline",
-    "validate",
-    "workshop",
-    "architect",
-    "blueprint",
-    "component",
-    "developer",
-    "ecosystem",
-    "frequency",
-    "generator",
-    "hierarchy",
-    "interface",
-    "knowledge",
-  ],
-};
-
-const getGameSettings = (level: number) => {
-  return {
-    correctStreakLimit: 3,
-    wrongStreakLimit: 2,
-    basePoints: 1, // Single base point value
-    levelMultiplier: level,
-    maxLevel: 6,
-    minLevel: 1,
-  };
-};
-
-// Get random word based on level
-const getRandomWord = (level: number) => {
-  let pool;
-  if (level <= 2) pool = wordPools.easy;
-  else if (level <= 4) pool = wordPools.medium;
-  else pool = wordPools.hard;
-
-  return pool[Math.floor(Math.random() * pool.length)];
-};
+import {
+  bgColor,
+  getGameSettings,
+  getRandomWord,
+  scrambleWord,
+} from "./testTypeData";
 
 const WordScrambleGame = () => {
   const { updateGameStats, gameSession, categoryIndex } = useGame();
   const [scrambledWord, setScrambledWord] = useState("");
   const [userInput, setUserInput] = useState("");
-  const [feedback, setFeedback] = useState("");
+  const [ feedback, setFeedback ] = useState( "" );
+  const [canClick, setCanClick] = useState(true);
   const [currentWord, setCurrentWord] = useState("");
   const [level, setLevel] = useState(
     gameSession?.[categoryIndex]?.test?.level || 1
@@ -321,17 +52,9 @@ const WordScrambleGame = () => {
     return false;
   };
 
-  // Scramble the word
-  const scrambleWord = (word: string) => {
-    const arr = word.split("");
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr.join("");
-  };
-
-  const generateNewWord = () => {
+  const generateNewWord = () =>
+  {
+    setCanClick( true );
     const newWord = getRandomWord(level);
     setCurrentWord(newWord);
 
@@ -362,7 +85,10 @@ const WordScrambleGame = () => {
   };
 
   // Handle submission
-  const handleSubmit = () => {
+  const handleSubmit = () =>
+  {
+    if ( !canClick ) return;
+    setCanClick( false );
     const isCorrect = userInput.replace(/\s+/g, "") === currentWord;
 
     if (isCorrect) {
@@ -379,7 +105,7 @@ const WordScrambleGame = () => {
     }
 
     // Check for level changes
-    const levelChanged = handleLevelProgression();
+    handleLevelProgression();
 
     setTimeout(() => {
       setFeedback("");
@@ -389,25 +115,41 @@ const WordScrambleGame = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen md:p-8 select-none">
+    <div
+      role="region"
+      aria-label="Word Scramble Game"
+      className="flex flex-col items-center justify-center min-h-screen md:p-8 select-none"
+    >
       <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto">
         {/* Scrambled Word Display */}
         <motion.div
+          role="region"
+          aria-label="Scrambled word to unscramble"
           key={scrambledWord}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", bounce: 0.4 }}
           className="flex justify-center mb-12"
         >
-          <div className="border-4 border-orange-500 rounded-lg w-full py-8 flex items-center justify-center">
-            <div className="text-4xl font-bold text-orange-500 tracking-wider">
+          <div
+            aria-live="polite"
+            className="border-4 border-orange-500 rounded-lg w-full py-8 flex items-center justify-center"
+          >
+            <div
+              aria-label={`Unscramble this word: ${scrambledWord}`}
+              className="text-4xl font-bold text-orange-500 tracking-wider"
+            >
               {scrambledWord}
             </div>
           </div>
         </motion.div>
 
         {/* Input Field */}
-        <div className="flex flex-col md:flex-row gap-4 w-full px-4 sm:px-0">
+        <div
+          role="form"
+          aria-label="Word submission form"
+          className="flex flex-col md:flex-row gap-4 w-full px-4 sm:px-0"
+        >
           <motion.input
             type="text"
             ref={inputRef}
@@ -417,10 +159,16 @@ const WordScrambleGame = () => {
              focus:outline-none focus:border-orange-600"
             placeholder="Type your answer..."
             whileFocus={{ scale: 1.02 }}
+            aria-label="Enter your answer"
             onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
           />
           <motion.button
-            onClick={handleSubmit}
+            onClick={ () =>
+            {
+              if (!canClick) return;
+              handleSubmit();
+            }}
+            aria-label="Submit your answer"
             className={`${bgColor} w-full sm:w-auto px-6 sm:px-4 py-3 sm:py-4 text-lg sm:text-2xl text-neutral-800 dark:text-neutral-200 rounded-md`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -432,6 +180,8 @@ const WordScrambleGame = () => {
         {/* Feedback */}
         {feedback && (
           <motion.div
+            role="alert"
+            aria-live="assertive"
             className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 40 }}

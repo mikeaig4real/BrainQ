@@ -2,56 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useGame } from "@/contexts/GameContext";
-
-// Types
-type OrderType = "increasing" | "decreasing";
-
-interface GameSettings {
-  numberCount: number;
-  minDigits: number;
-  maxDigits: number;
-  streakToLevelUp: number;
-  streakToLevelDown: number;
-}
-
-interface NumberTile {
-  value: number;
-  isSelected: boolean;
-  id: number;
-}
-
-// Game Constants
-const INITIAL_LEVEL = 1;
-const MAX_LEVEL = 10;
-const MIN_LEVEL = 1;
-
-// Utility Functions
-const getGameSettings = (level: number): GameSettings => ({
-  numberCount: Math.min(4 + Math.floor(level / 2), 8),
-  minDigits: Math.min(level, 4),
-  maxDigits: Math.min(level + 1, 5),
-  streakToLevelUp: 4,
-  streakToLevelDown: 2,
-});
-
-const generateRandomNumber = (minDigits: number, maxDigits: number): number => {
-  const min = Math.pow(10, minDigits - 1);
-  const max = Math.pow(10, maxDigits) - 1;
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-const generateNumbers = (settings: GameSettings): number[] => {
-  const numbers: number[] = [];
-  const { numberCount, minDigits, maxDigits } = settings;
-
-  while (numbers.length < numberCount) {
-    const newNumber = generateRandomNumber(minDigits, maxDigits);
-    if (!numbers.includes(newNumber)) {
-      numbers.push(newNumber);
-    }
-  }
-  return numbers;
-};
+import {
+  OrderType,
+  NumberTile,
+  getGameSettings,
+  generateNumbers,
+  MAX_LEVEL,
+  MIN_LEVEL,
+} from "./testTypeData";
 
 const CountdownGame: React.FC = () => {
   // State
@@ -155,22 +113,39 @@ const CountdownGame: React.FC = () => {
 
   // Render
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 md:py-4 select-none mt-16">
-      <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto">
+    <div
+      role="main"
+      aria-label="Number Sequence Game"
+      className="flex flex-col items-center justify-center min-h-screen py-2 md:py-4 select-none mt-16"
+    >
+      <div
+        role="heading"
+        aria-level={1}
+        className="flex flex-col gap-4 w-full max-w-2xl mx-auto"
+      >
         {/* Game Stats */}
         <div className="text-neutral-800 dark:text-neutral-200 text-center mb-4">
           <p className="text-xl">Click numbers in {orderType} order</p>
         </div>
 
         {/* Number Display and Progress Container */}
-        <div className="flex justify-center mb-8">
+        <div
+          role="region"
+          aria-label="Progress tracking"
+          className="flex justify-center mb-8"
+        >
           <motion.div
             className="border-4 border-red-500 rounded-lg w-full h-32 flex items-center justify-center relative"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            aria-label="Current sequence progress"
           >
             {/* Current Progress Display */}
-            <div className="flex gap-2 text-red-500 text-sm">
+            <div
+              role="status"
+              aria-live="polite"
+              className="flex gap-2 text-red-500 text-sm"
+            >
               {[...numbers]
                 .sort((a, b) =>
                   orderType === "increasing"
@@ -179,6 +154,13 @@ const CountdownGame: React.FC = () => {
                 )
                 .map((number, idx) => (
                   <span
+                    aria-label={`${
+                      number.isSelected
+                        ? "Selected"
+                        : idx === currentIndex
+                        ? "Current"
+                        : "Hidden"
+                    } number ${number.isSelected ? number.value : "?"}`}
                     key={number.id}
                     className={`
                   ${idx === currentIndex ? "text-yellow-500" : ""}
@@ -195,7 +177,11 @@ const CountdownGame: React.FC = () => {
         </div>
 
         {/* Number Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+        <div
+          role="group"
+          aria-label="Number selection grid"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+        >
           {numbers.map((number) => (
             <motion.button
               key={number.id}
@@ -216,6 +202,10 @@ const CountdownGame: React.FC = () => {
               }
               whileTap={!number.isSelected && !gameOver ? { scale: 0.95 } : {}}
               disabled={number.isSelected || gameOver}
+              aria-label={`Number ${number.value}${
+                number.isSelected ? " - already selected" : ""
+              }`}
+              aria-disabled={number.isSelected || gameOver}
             >
               {number.value}
             </motion.button>
@@ -228,6 +218,8 @@ const CountdownGame: React.FC = () => {
             className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 40 }}
+            role="alert"
+            aria-live="assertive"
           >
             {feedback}
           </motion.div>

@@ -1,60 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FaHeart,
-  FaStar,
-  FaCircle,
-  FaSquare,
-  FaCross,
-  FaMoon,
-  FaSun,
-  FaCloud,
-} from "react-icons/fa";
 import { useGame } from "@/contexts/GameContext";
-
-const bgColor = "bg-blue-500";
-
-interface IconOption {
-  id: string;
-  icon: React.ReactNode;
-}
-
-interface Sequence {
-  pattern: string[];
-  displayDuration: number;
-  displayInterval: number;
-  activeIcons: IconOption[];
-}
-
-// All available icons
-const allIconOptions: IconOption[] = [
-  { id: "heart", icon: <FaHeart size={32} /> },
-  { id: "star", icon: <FaStar size={32} /> },
-  { id: "circle", icon: <FaCircle size={32} /> },
-  { id: "square", icon: <FaSquare size={32} /> },
-  { id: "cross", icon: <FaCross size={32} /> },
-  { id: "moon", icon: <FaMoon size={32} /> },
-  { id: "sun", icon: <FaSun size={32} /> },
-  { id: "cloud", icon: <FaCloud size={32} /> },
-];
-
-const getGameSettings = (level: number) => {
-  return {
-    correctStreakLimit: 1, // Number of correct sequences needed to level up
-    wrongStreakLimit: 2, // Number of wrong attempts before level down
-    basePoints: 1, // Base points for each correct sequence
-    levelMultiplier: level,
-    maxLevel: 6, // Maximum achievable level
-    minLevel: 1,
-    // Sequence gets longer and faster with level
-    sequenceLength: Math.min(4 + Math.floor(level / 2), 8),
-    displayDuration: Math.max(1000 - level * 50, 400), // Time each icon is shown
-    displayInterval: Math.max(1500 - level * 75, 600), // Time between icons
-    // Number of icons increases with level
-    numIcons: Math.min(2 + Math.floor(level / 2), allIconOptions.length),
-  };
-};
+import {
+  bgColor,
+  IconOption,
+  allIconOptions,
+  getGameSettings,
+  getDifficultySettings,
+} from "./testTypeData";
 
 const IconSequenceGame: React.FC = () => {
   const { updateGameStats, gameSession, categoryIndex } = useGame();
@@ -70,33 +24,6 @@ const IconSequenceGame: React.FC = () => {
   const [wrongStreak, setWrongStreak] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [activeIcons, setActiveIcons] = useState<IconOption[]>([]);
-
-  // Modified getDifficultySettings to use game settings
-  const getDifficultySettings = (level: number): Sequence => {
-    const settings = getGameSettings(level);
-    const currentIcons = allIconOptions.slice(0, settings.numIcons);
-
-    return {
-      pattern: generatePattern(
-        settings.sequenceLength,
-        currentIcons.map((icon) => icon.id)
-      ),
-      displayDuration: settings.displayDuration,
-      displayInterval: settings.displayInterval,
-      activeIcons: currentIcons,
-    };
-  };
-
-  // Generate random pattern
-  const generatePattern = (
-    length: number,
-    availableIds: string[]
-  ): string[] => {
-    return Array.from(
-      { length },
-      () => availableIds[Math.floor(Math.random() * availableIds.length)]
-    );
-  };
 
   // Modified handleLevelChange to use game settings
   const handleLevelChange = (isCorrect: boolean) => {
@@ -205,11 +132,22 @@ const IconSequenceGame: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 select-none">
+    <div
+      role="main"
+      aria-label="Icon Sequence Memory Game"
+      className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 select-none"
+    >
       <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto">
         {/* Sequence Display and User Input Container */}
-        <div className="flex justify-center mb-12">
-          <motion.div className="border-4 border-blue-500 rounded-lg w-full h-32 flex items-center justify-center relative">
+        <div
+          role="region"
+          aria-label="Sequence display area"
+          className="flex justify-center mb-12"
+        >
+          <motion.div
+            aria-live="polite"
+            className="border-4 border-blue-500 rounded-lg w-full h-32 flex items-center justify-center relative"
+          >
             {/* Sequence Display */}
             <AnimatePresence mode="wait">
               {displayIndex >= 0 && !isTransitioning && (
@@ -219,6 +157,11 @@ const IconSequenceGame: React.FC = () => {
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                   className="text-blue-500 absolute"
+                  aria-label={`Current icon: ${
+                    allIconOptions.find(
+                      (icon) => icon.id === currentSequence[displayIndex]
+                    )?.id || ""
+                  }`}
                 >
                   {
                     allIconOptions.find(
@@ -231,13 +174,18 @@ const IconSequenceGame: React.FC = () => {
 
             {/* User Input Display */}
             {!isPlaying && !isTransitioning && (
-              <div className="flex justify-center gap-2 absolute">
+              <div
+                aria-label="Your sequence input"
+                role="status"
+                className="flex justify-center gap-2 absolute"
+              >
                 {userSequence.map((iconId, index) => (
                   <motion.div
                     key={`input-${index}`}
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     className="text-blue-500"
+                    aria-label={`Selected icon ${index + 1}: ${iconId}`}
                   >
                     {allIconOptions.find((icon) => icon.id === iconId)?.icon}
                   </motion.div>
@@ -253,11 +201,23 @@ const IconSequenceGame: React.FC = () => {
             <motion.button
               key={option.id}
               onClick={() => handleIconClick(option.id)}
+              onKeyDown={(e) => {
+                if (
+                  (e.key === "Enter" || e.key === " ") &&
+                  !isPlaying &&
+                  !isTransitioning
+                ) {
+                  e.preventDefault();
+                  handleIconClick(option.id);
+                }
+              }}
               className={`${bgColor} flex items-center p-2 justify-center text-center rounded-md text-neutral-800 dark:text-neutral-200 
                 disabled:opacity-50`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               disabled={isPlaying || isTransitioning}
+              aria-label={`Select ${option.id} icon`}
+              aria-disabled={isPlaying || isTransitioning}
             >
               {option.icon}
             </motion.button>
@@ -270,6 +230,8 @@ const IconSequenceGame: React.FC = () => {
             className="fixed top-8 left-0 right-0 text-neutral-800 dark:text-neutral-200 text-2xl md:text-6xl font-bold text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 40 }}
+            role="alert"
+            aria-live="assertive"
           >
             {feedback}
           </motion.div>

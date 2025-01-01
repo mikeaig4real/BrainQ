@@ -23,7 +23,8 @@ const SinglePlayerPage = (): JSX.Element => {
     session: any[];
     categories: any[];
     categoryIndex: number;
-  }) => {
+    } ) =>
+  {
     if (
       session &&
       session?.[categoryIndex].started &&

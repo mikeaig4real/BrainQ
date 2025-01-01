@@ -4,37 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GiRat as FaRat } from "react-icons/gi";
 import { useGame } from "@/contexts/GameContext";
-
-// Typings
-interface Mole {
-  id: number;
-  isVisible: boolean;
-}
-
-interface GameSettings {
-  basePoints: number;
-  levelMultiplier: number;
-  maxLevel: number;
-  minLevel: number;
-  showDuration: number;
-  gridSize: number;
-  missLimit: number;
-  correctStreakLimit: number;
-  wrongStreakLimit: number;
-}
-
-// Game settings function
-const getGameSettings = (level: number): GameSettings => ({
-  basePoints: 1,
-  levelMultiplier: level,
-  maxLevel: 6,
-  minLevel: 1,
-  showDuration: Math.max(1200 - level * 150, 200), // Faster at higher levels
-  gridSize: Math.min(level + 1, 4), // Max grid size 4x4
-  missLimit: 5,
-  correctStreakLimit: 5, // Level up after 3 correct streaks
-  wrongStreakLimit: 2, // Level down after 2 wrong streaks
-});
+import { Mole, GameSettings, getGameSettings } from "./testTypeData";   
 
 const WhackAMoleGame: React.FC = () => {
   const { updateGameStats, gameSession, categoryIndex } = useGame();
@@ -117,13 +87,19 @@ const WhackAMoleGame: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 mt-16">
+    <div
+      role="region"
+      aria-label="Whack-a-mole game board"
+      className="flex flex-col items-center gap-4 mt-16"
+    >
       {/* Game Grid */}
       <div
         className="grid gap-2 mb-4"
         style={{
           gridTemplateColumns: `repeat(${settings.gridSize}, minmax(0, 1fr))`,
         }}
+        role="grid"
+        aria-label="Whack-a-mole grid"
       >
         {moles.map((mole, index) => (
           <motion.button
@@ -132,6 +108,8 @@ const WhackAMoleGame: React.FC = () => {
             onClick={() => handleWhack(index)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            aria-label={mole.isVisible ? "Active mole target" : "Empty hole"}
+            aria-pressed={mole.isVisible}
           >
             <AnimatePresence>
               {mole.isVisible && (
@@ -156,6 +134,8 @@ const WhackAMoleGame: React.FC = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 40 }}
           exit={{ opacity: 0 }}
+          role="alert"
+          aria-live="polite"
         >
           {feedback}
         </motion.div>

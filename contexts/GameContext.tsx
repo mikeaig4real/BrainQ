@@ -178,6 +178,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return gameSession.every((category) => category.started && category.ended);
   };
 
+  // reset gameSession patch
+  // useEffect(() => {
+  //   haveFinishedAllGames() && resetProgress();
+  // }, [gameSession]);
+
   const getCategoryIndexFromSession = (session: typeof SESSION_STATE) => {
     const categoryIndex = session?.findIndex((category) => !category?.ended);
     return categoryIndex;
