@@ -18,11 +18,10 @@ Brain-Q goes beyond traditional learning apps by incorporating interactive games
 ## Key Features
 
 - 🔐 **Secure Login**: User authentication with Amazon Cognito
-- 🎮 **Brain Games**: Puzzle-based gameplay across logic, math, memory, reaction, visual, and word categories
+- 🎮 **Brain Games**: Puzzle-based game-play across logic, math, memory, reaction, visual/focus, and word categories
 - 🕹️ **Category Progression**: Dynamic tracking of scores, performance metrics, and skill improvement
 - 📊 **Performance Insights**: Real-time score updates and concise performance summaries after each session
-- 🌟 **Gamified Experience**: Earn points and track achievements across various categories
-- 🔄 **Interactive Animations**: Eye-catching animations powered by Framer Motion
+- 🔄 **Animations**: Eye-catching animations powered by Framer Motion
 - 📱 **Responsive Design**: Simulated tablet/mobile interface for immersive gameplay
 
 ## Getting Started
