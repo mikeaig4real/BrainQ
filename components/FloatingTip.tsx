@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PiHeadCircuitDuotone } from "react-icons/pi";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -11,7 +11,8 @@ const FloatingTip: React.FC = () => {
   const pathName = usePathname();
   const tips = tipsData?.[pathName] || [];
 
-  const incrementTipIndex = () => {
+  const incrementTipIndex = () =>
+  {
     const newTipIndex = (tipIndex + 1) % tips.length;
     setTipIndex(newTipIndex);
   };
@@ -20,6 +21,11 @@ const FloatingTip: React.FC = () => {
     isVisible && incrementTipIndex();
     setIsVisible(!isVisible);
   };
+
+  useEffect( () =>
+  {
+    setTipIndex;(0);
+  }, [pathName]);
 
   return (
     <div className="fixed bottom-5 right-5 flex items-center z-50">
