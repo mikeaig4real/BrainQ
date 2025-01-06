@@ -24,7 +24,7 @@ const FloatingTip: React.FC = () => {
 
   useEffect( () =>
   {
-    setTipIndex;(0);
+    setTipIndex(0);
   }, [pathName]);
 
   return (
