@@ -84,10 +84,6 @@ export const helpData = [
         title: 'All Questions Correct, Stats still low?',
         description: "Yes, It's possible to get all questions correctly but still low performance, this is because just as correctness is measured, speed is measured by how many questions you can answer",
       },
-      {
-        title: 'Multiple Accounts on the same device..?',
-        description: "For now, Brain-Q better supports a single account per device based on several reasons like user authentication/data management and synchronization",
-      }
     ]
   },
   {

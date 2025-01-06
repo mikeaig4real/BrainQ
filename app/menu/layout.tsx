@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import NavBarComponent from "@/components/Navbar";
+import FloatingTip from "@/components/FloatingTip";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Authenticator,
@@ -109,6 +110,7 @@ const MenuLayout = ({ children }: { children: React.ReactNode }) => {
     <ThemeProvider theme={theme}>
       <View padding="xxl">
         <Authenticator>
+          <FloatingTip />
           <section className="min-h-screen w-[80vw] flex flex-col py-14 px-6">
             <NavBarComponent {...getPropsForNav(pathName)} showAvatar={true} />
             <div className="flex-1 flex items-center justify-center">

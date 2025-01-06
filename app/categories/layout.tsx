@@ -4,9 +4,10 @@ import GameWrapper from "@/components/GameWrapper";
 import { useGame } from "@/contexts/GameContext";
 import { usePathname, useRouter } from "next/navigation";
 import { categories } from "@/utils/constants";
+import FloatingTip from "@/components/FloatingTip";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { categoryIndex, gameSession } = useGame();
+  const { categoryIndex } = useGame();
   const router = useRouter();
   const pathname = usePathname();
   const [isValidPath, setIsValidPath] = useState(false);
@@ -28,7 +29,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     return null; // Render nothing until the path is validated
   }
 
-  return <GameWrapper>{children}</GameWrapper>;
+  return <GameWrapper>
+    <FloatingTip />
+    { children }
+  </GameWrapper>;
 };
 
 export default Layout;

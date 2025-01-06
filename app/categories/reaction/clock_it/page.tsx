@@ -54,13 +54,6 @@ const StopwatchGame = () => {
     const settings = getGameSettings(level);
     const difference = +Math.abs(time - targetTime).toFixed(1);
     const isWithinPrecision = difference <= settings.precisionRequired;
-    console.log( {
-      difference,
-      isWithinPrecision,
-      time,
-      targetTime,
-      precisionRequired: settings.precisionRequired,
-    })
     if (isWithinPrecision) {
       updateGameStats({
         totalCorrect: 1,
