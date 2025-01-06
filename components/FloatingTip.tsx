@@ -16,7 +16,7 @@ const FloatingTip: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-12 right-12 flex items-center z-50">
+    <div className="fixed bottom-5 right-5 flex items-center z-50">
       <div className="relative">
         <AnimatePresence>
           {isVisible && !!tips?.length && (
