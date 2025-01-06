@@ -14,11 +14,6 @@ const FloatingTip: React.FC = () => {
   const tips = tipsData?.[pathName] || [];
   let tipInterval = useRef<NodeJS.Timeout>();
 
-  console.log({
-    pathName,
-    tips,
-  });
-
   const getFixedPosition = () => {
     const padding = 50; // Padding from edges
     const newIsRightCorner = Math.random() > 0.5;
