@@ -25,6 +25,7 @@ const SinglePlayerPage = (): JSX.Element => {
     categoryIndex: number;
     } ) =>
   {
+    return 0;
     if (
       session &&
       session?.[categoryIndex].started &&
@@ -68,7 +69,7 @@ const SinglePlayerPage = (): JSX.Element => {
         {categories.map((category, index) => (
           <div
             onClick={() => {
-              // setGameIndex(index);
+              setGameIndex(index);
             }}
             key={category.label}
             className={`flex flex-col items-center cursor-pointer transition-all duration-300
