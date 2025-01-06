@@ -7,11 +7,17 @@ import { tipsData } from "@/utils/tipsData";
 
 const FloatingTip: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [tipIndex, setTipIndex] = useState(0);
   const pathName = usePathname();
   const tips = tipsData?.[pathName] || [];
-  const currentTip = tips[Math.floor(Math.random() * tips.length)];
+
+  const incrementTipIndex = () => {
+    const newTipIndex = (tipIndex + 1) % tips.length;
+    setTipIndex(newTipIndex);
+  };
 
   const toggleTip = () => {
+    isVisible && incrementTipIndex();
     setIsVisible(!isVisible);
   };
 
@@ -37,7 +43,7 @@ const FloatingTip: React.FC = () => {
                 <div className="w-0 h-0 border-l-[8px] border-l-transparent border-t-[8px] border-t-white border-r-[8px] border-r-transparent" />
               </div>
               <p className="text-sm text-gray-700 whitespace-normal pr-4">
-                {currentTip}
+                {tips[tipIndex]}
               </p>
             </motion.div>
           )}
