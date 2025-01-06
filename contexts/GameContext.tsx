@@ -288,19 +288,20 @@ export function GameProvider({ children }: { children: ReactNode }) {
     updateGameSession(endCategoryData);
     saveGameSessionLocal(endCategoryData);
     saveGameSessionAmp(endCategoryData);
+    const isFinished = haveFinishedAllGames();
     setTimeout(() => {
-      if (categoryIndex + 1 < categories.length) {
+      if (categoryIndex + 1 < categories.length && !isFinished) {
         router.replace("/menu/single_player");
         return;
       }
       router.replace("/menu/stats");
     }, 3000);
     setTimeout(() => {
-      if (categoryIndex + 1 < categories.length) {
+      if (categoryIndex + 1 < categories.length && !isFinished) {
         setNextCategory();
         return;
       }
-      haveFinishedAllGames() && resetProgress();
+      isFinished && resetProgress();
     }, 4000);
   };
 
