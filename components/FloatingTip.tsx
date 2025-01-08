@@ -24,7 +24,9 @@ const FloatingTip: React.FC = () => {
 
   useEffect( () =>
   {
-    setTipIndex(0);
+    const randomIndex = Math.floor( Math.random() * tips.length );
+    setTipIndex( randomIndex );
+    setIsVisible( true );
   }, [pathName]);
 
   return (
