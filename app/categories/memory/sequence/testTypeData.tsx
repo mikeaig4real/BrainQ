@@ -24,7 +24,8 @@ export interface Sequence {
 }
 
 // All available icons
-export const allIconOptions: IconOption[] = ((size) => {
+export const allIconOptions = ( size: string | number | undefined = 32 ): IconOption[] =>
+{
   return [
     { id: "heart", icon: <FaHeart size={size} /> },
     { id: "star", icon: <FaStar size={size} /> },
@@ -35,7 +36,7 @@ export const allIconOptions: IconOption[] = ((size) => {
     { id: "sun", icon: <FaSun size={size} /> },
     { id: "cloud", icon: <FaCloud size={size} /> },
   ];
-})(32);
+};
 
 export const getGameSettings = (level: number) => {
   return {
@@ -50,7 +51,7 @@ export const getGameSettings = (level: number) => {
     displayDuration: Math.max(1000 - level * 50, 400), // Time each icon is shown
     displayInterval: Math.max(1500 - level * 75, 600), // Time between icons
     // Number of icons increases with level
-    numIcons: Math.min(2 + Math.floor(level / 2), allIconOptions.length),
+    numIcons: Math.min(2 + Math.floor(level / 2), allIconOptions().length),
   };
 };
 export const generatePattern = (
@@ -65,7 +66,7 @@ export const generatePattern = (
 // Modified getDifficultySettings to use game settings
 export const getDifficultySettings = (level: number): Sequence => {
   const settings = getGameSettings(level);
-  const currentIcons = allIconOptions.slice(0, settings.numIcons);
+  const currentIcons = allIconOptions().slice(0, settings.numIcons);
 
   return {
     pattern: generatePattern(

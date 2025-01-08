@@ -158,13 +158,13 @@ const IconSequenceGame: React.FC = () => {
                   exit={{ scale: 0 }}
                   className="text-blue-500 absolute"
                   aria-label={`Current icon: ${
-                    allIconOptions.find(
+                    allIconOptions(26).find(
                       (icon) => icon.id === currentSequence[displayIndex]
                     )?.id || ""
                   }`}
                 >
                   {
-                    allIconOptions.find(
+                    allIconOptions(26).find(
                       (icon) => icon.id === currentSequence[displayIndex]
                     )?.icon
                   }
@@ -187,7 +187,7 @@ const IconSequenceGame: React.FC = () => {
                     className="text-blue-500"
                     aria-label={`Selected icon ${index + 1}: ${iconId}`}
                   >
-                    {allIconOptions.find((icon) => icon.id === iconId)?.icon}
+                    {allIconOptions(18).find((icon) => icon.id === iconId)?.icon}
                   </motion.div>
                 ))}
               </div>
