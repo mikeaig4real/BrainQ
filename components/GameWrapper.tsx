@@ -97,7 +97,7 @@ const GameWrapper = ({ children }: GameWrapperProps): JSX.Element => {
       <NavBarComponent {...getPropsForNav()} showAvatar={true} />
       {/* Timer Display */}
       <div
-        className={`absolute ${bgColor} top-0 left-0 w-10 h-10 lg:w-16 lg:h-16 text-2xl lg:text-4xl rounded-full flex items-center justify-center font-bold text-neutral-800 dark:text-neutral-200`}
+        className={`absolute ${bgColor} top-0 left-0 w-10 h-10 lg:w-16 lg:h-16 text-base lg:text-2xl rounded-full flex items-center justify-center font-bold text-neutral-800 dark:text-neutral-200`}
       >
         {`${timeLeft}`}
       </div>

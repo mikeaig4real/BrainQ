@@ -25,9 +25,8 @@ const TrueOrFalseGame = () => {
   });
   const [usedQuestions, setUsedQuestions] = useState<Set<number>>(new Set());
 
-  const generateQuestion = useCallback( (): void =>
-  {
-    setCanClick( true );
+  const generateQuestion = useCallback((): void => {
+    setCanClick(true);
     const difficulty = getDifficultyFromLevel(level);
     const questions = advancedQuestionTemplates[difficulty];
 
@@ -64,8 +63,7 @@ const TrueOrFalseGame = () => {
     generateQuestion();
   }, [level]); // Only depend on level changes
 
-  const handleChoice = ( choice: boolean ): void =>
-  {
+  const handleChoice = (choice: boolean): void => {
     if (!canClick) return; // Prevent multiple clicks
     setCanClick(false); // Disable clicks immediately after
     const settings = getGameSettings(level);
@@ -144,16 +142,18 @@ const TrueOrFalseGame = () => {
           aria-label="Logical statements"
           className="flex flex-col gap-4 text-base sm:text-xl md:text-2xl text-center font-bold"
         >
-          {question.statements.map((statement, index) => (
-            <motion.p
-              role="listitem"
-              key={index}
-              className="text-yellow-500 px-2 py-1 break-words"
-              whileHover={{ scale: 1.02 }}
-            >
-              {statement}
-            </motion.p>
-          ))}
+          <div className="bg-black max-h-[30vh] p-1 overflow-hidden overflow-y-scroll rounded-sm">
+            {question.statements.map((statement, index) => (
+              <motion.p
+                role="listitem"
+                key={index}
+                className="text-yellow-500 px-2 py-1 break-words"
+                whileHover={{ scale: 1.02 }}
+              >
+                {statement}
+              </motion.p>
+            ))}
+          </div>
 
           {/* Final Statement */}
           <motion.p
@@ -172,10 +172,9 @@ const TrueOrFalseGame = () => {
         >
           <button
             className="bg-yellow-500 px-4 md:px-6 py-2 md:py-3 text-base md:text-xl text-black rounded-md hover:bg-yellow-400 transition-colors"
-            onClick={ () =>
-            {
-              if ( !canClick ) return;
-              handleChoice( true );
+            onClick={() => {
+              if (!canClick) return;
+              handleChoice(true);
             }}
             aria-label="Select True"
             aria-pressed="false"
@@ -184,10 +183,9 @@ const TrueOrFalseGame = () => {
           </button>
           <button
             className="bg-black px-4 md:px-6 py-2 md:py-3 text-base md:text-xl text-neutral-800 dark:text-neutral-200 rounded-md border-yellow-500 border hover:bg-gray-900 transition-colors"
-            onClick={ () =>
-            {
-              if ( !canClick ) return;
-              handleChoice( false );
+            onClick={() => {
+              if (!canClick) return;
+              handleChoice(false);
             }}
             aria-label="Select False"
             aria-pressed="false"
