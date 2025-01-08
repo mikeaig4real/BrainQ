@@ -10,19 +10,19 @@ const moreInfo = ( label: string, description: string ):string =>
   const moreInfoMap: {
     [key: string]: string
   } = {
-"mnemonic":"Two groups of words named with colors will be displayed to you, you have to memorize the words from the first groups displayed and find the word or words that appear in the next group.",
+"mnemonic":"Two groups of words named with colors will be displayed to you, you have to memorize the words from the first group displayed and find the word or words that appear in the next group.",
 "sequence":"Wait and watch the way icons are produced and their frequency, after which you'll need to reproduce them in the same order and frequency they appeared.",
 "arithmetic":"Pick the right options that will make the mathematical equations displayed to you mathematically correct.",
-"chips":"Two boxes of balls will appear to you, you have to pick the one that holds the most addictive weight.",
-"countdown":"Numbers will be throw at you to pick/click them in the oder the question demands, be it in increasing or decreasing order.",
-"true_or_false":"Statements will be given to you to be a ble to deduce if the final question asked is true or false.",
-"patterns":"Logically predict what comes next from the group of progressions of icons/or and numbers.",
+"chips":"Two boxes of balls will appear to you, you have to pick the one that holds the most additive weight.",
+"countdown":"Numbers will be thrown at you to pick/click them in the order the question demands, be it in increasing or decreasing order.",
+"true_or_false":"Statements will be given to you to be able to deduce if the final question asked is true or false.",
+"patterns":"Logically predict what comes next from the group of progressions of icons and/or numbers.",
 "clock_it":"Click the stop button to stop the ticking time as soon as the target given is reached, make sure to check for the right precision required.",
-"whack_it":"Quickly hit the rat when and where you see it",
-"number_flash":"Identify what group of numbers is a perfect match to the ones flashing in the screen.",
-"bubbles":"Identify the ball that bonces the highest amongst all of the balls bouncing on the screen.",
+"whack_it":"Quickly hit the rat when and where you see it.",
+"number_flash":"Identify which group of numbers is a perfect match to the ones flashing on the screen.",
+"bubbles":"Identify the ball that bounces the highest amongst all of the balls bouncing on the screen.",
 "scramble":"Try to decode the scattered word by typing what it might be when it's in the right order.",
-"hangman":"Try to complete the word with the limited amount of lives given, you can make use of hints by clicking the 'Use Hint' button to reveal some letters",
+"hangman":"Try to complete the word with the limited amount of lives given. You can make use of hints by clicking the 'Use Hint' button to reveal some letters.",
   }
   return moreInfoMap[label] ? `: ${moreInfoMap[label]}` : "";
 }
