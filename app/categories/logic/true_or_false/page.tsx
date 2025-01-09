@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { useGame } from "@/contexts/GameContext";
 import {
@@ -23,7 +23,17 @@ const TrueOrFalseGame = () => {
     finalStatement: "",
     isCorrect: false,
   });
-  const [usedQuestions, setUsedQuestions] = useState<Set<number>>(new Set());
+  const [ usedQuestions, setUsedQuestions ] = useState<Set<number>>( new Set() );
+  const divRef = useRef<HTMLDivElement>(null);
+  const scrollToTop = () => {
+    if (divRef.current) {
+      divRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
 
   const generateQuestion = useCallback((): void => {
     setCanClick(true);
@@ -54,7 +64,8 @@ const TrueOrFalseGame = () => {
     // Add the used question to the set
     setUsedQuestions((prev) => new Set([...prev, randomIndex]));
     setQuestion(randomQuestion);
-    updateGameStats({ totalQuestions: 1 });
+    updateGameStats( { totalQuestions: 1 } );
+    scrollToTop();
   }, [level, usedQuestions]);
 
   // Reset used questions and generate new question when level changes
@@ -142,7 +153,9 @@ const TrueOrFalseGame = () => {
           aria-label="Logical statements"
           className="flex flex-col gap-4 text-base sm:text-xl md:text-2xl text-center font-bold"
         >
-          <div className="bg-black max-h-[30vh] p-1 overflow-hidden overflow-y-scroll rounded-sm">
+          <div
+            ref={divRef}
+            className="bg-black max-h-[30vh] p-1 overflow-hidden overflow-y-scroll rounded-sm">
             {question.statements.map((statement, index) => (
               <motion.p
                 role="listitem"

@@ -261,7 +261,7 @@ const ArithmeticGame: React.FC = () => {
   return (
     <div className="relative py-32">
       {/* Equation Display */}
-      <div className="w-full flex items-center justify-center gap-4 text-4xl font-bold p-8 rounded shadow-md mb-12 select-none">
+      <div className="w-full flex items-center justify-center gap-4 text-2xl font-bold p-8 rounded shadow-md mb-12 select-none">
         {question.equation.map((part, index) => (
           <motion.span
             key={index}

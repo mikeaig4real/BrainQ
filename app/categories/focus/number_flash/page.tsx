@@ -190,7 +190,7 @@ const FlashingNumbersGame = () => {
                   }
                 }}
                 aria-label={`Select sequence ${option.join(" ")}`}
-                className={`${bgColor} px-6 md:px-8 py-6 md:py-8 text-lg md:text-2xl text-neutral-800 dark:text-neutral-200 rounded-md hover:opacity-90 transition-colors`}
+                className={`${bgColor} px-3 md:px-4 py-3 md:py-4 text-lg md:text-2xl text-neutral-800 dark:text-neutral-200 rounded-md hover:opacity-90 transition-colors`}
                 whileHover={{ scale: 1.02 }}
               >
                 {option.join("  ")}

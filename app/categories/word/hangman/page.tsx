@@ -333,15 +333,15 @@ const HangmanGame = () => {
       <div role="status" aria-live="polite" className="text-center relative">
         <p
           aria-label={`Lives remaining: ${gameState.lives}`}
-          className="text-lg text-orange-500"
+          className="text-base text-orange-500"
         >
           Lives : {gameState.lives}
         </p>
         <p
           aria-label={`Current category: ${gameState.currentCategory}`}
-          className="text-lg text-orange-500"
+          className="text-sm text-orange-500"
         >
-          Category: {gameState.currentCategory}
+          Think {gameState.currentCategory}...
         </p>
         <button
           onClick={handleHint}
@@ -355,18 +355,20 @@ const HangmanGame = () => {
 
       {/* Hangman Drawing */}
       <div className="flex flex-col items-center">
-        <HangmanDrawing
-          remainingLives={gameState.lives}
-          totalLives={gameState.totalLives}
-        />
+        <div className="scale-60">
+          <HangmanDrawing
+            remainingLives={gameState.lives}
+            totalLives={gameState.totalLives}
+          />
+        </div>
 
         {/* Word Display */}
-        <div className="flex justify-center gap-2 text-2xl font-mono mt-4">
+        <div className="flex w-full flex-wrap justify-center gap-2 text-2xl font-mono mt-4">
           {gameState.selectedWord.split("").map((letter, index) => (
             <span
               key={index}
               aria-label="Word to guess"
-              className="w-8 h-8 flex items-center justify-center border-b-2 border-gray-400"
+              className="w-8 h-8 flex items-center justify-center border-b-2 border-gray-400 break-words"
             >
               {gameState.guessedLetters.includes(letter) ? letter : "_"}
             </span>
@@ -375,7 +377,7 @@ const HangmanGame = () => {
       </div>
 
       {/* Keyboard */}
-      <div className="grid grid-cols-7 gap-4">
+      <div className="grid grid-cols-7 gap-y-2 gap-x-4">
         {alphabet.map((letter) => (
           <motion.button
             key={letter}

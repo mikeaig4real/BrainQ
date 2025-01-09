@@ -191,7 +191,7 @@ const MnemonicGame: React.FC = () => {
 
       {gamePhase === "guessing" && (
         <div>
-          <div className="text-xl mb-16 text-center">
+          <div className="text-base mb-16 text-center">
             Find words that appeared in both groups:
           </div>
           <motion.div

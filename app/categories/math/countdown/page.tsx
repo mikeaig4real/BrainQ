@@ -144,7 +144,7 @@ const CountdownGame: React.FC = () => {
             <div
               role="status"
               aria-live="polite"
-              className="flex gap-2 text-red-500 text-sm"
+              className="flex w-full flex-wrap justify-center gap-2 text-red-500 text-sm"
             >
               {[...numbers]
                 .sort((a, b) =>

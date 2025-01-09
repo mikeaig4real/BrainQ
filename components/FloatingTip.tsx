@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PiHeadCircuitDuotone } from "react-icons/pi";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -11,8 +11,9 @@ const FloatingTip: React.FC = () => {
   const pathName = usePathname();
   const tips = tipsData?.[pathName] || [];
 
-  const incrementTipIndex = () =>
-  {
+  const timeOutRef = useRef<NodeJS.Timeout>();
+
+  const incrementTipIndex = () => {
     const newTipIndex = (tipIndex + 1) % tips.length;
     setTipIndex(newTipIndex);
   };
@@ -22,11 +23,18 @@ const FloatingTip: React.FC = () => {
     setIsVisible(!isVisible);
   };
 
-  useEffect( () =>
-  {
-    const randomIndex = Math.floor( Math.random() * tips.length );
-    setTipIndex( randomIndex );
-    setIsVisible( true );
+  const closeTimeTip = (time = 3000) => {
+    clearTimeout(timeOutRef.current);
+    timeOutRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, time);
+  };
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * tips.length);
+    setTipIndex(randomIndex);
+    setIsVisible(true);
+    closeTimeTip();
   }, [pathName]);
 
   return (

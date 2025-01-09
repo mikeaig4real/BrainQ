@@ -78,7 +78,7 @@ export const helpData = [
       },
       {
         title: 'Is Brain-Q suitable for all ages?',
-        description: 'Absolutely! Brain-Q is designed for users of all ages. The adaptive difficulty ensures everyone can benefit from the exercises.'
+        description: 'Absolutely! Brain-Q is designed for users of all ages (Um... Most of the time 🤣). The adaptive difficulty ensures everyone can benefit from the exercises.'
       },
       {
         title: 'All Questions Correct, Stats still low?',
