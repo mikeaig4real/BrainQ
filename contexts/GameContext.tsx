@@ -3,7 +3,6 @@
 import {
   createContext,
   useContext,
-  useCallback,
   useEffect,
   useState,
   ReactNode,
@@ -16,6 +15,16 @@ import { type Schema } from "../amplify/data/resource";
 import { StorageService } from "@/services";
 
 const client = generateClient<Schema>();
+
+const calculateMean = (values: number[]) => {
+  return Math.floor(values.reduce((prev, curr) => prev + curr) / values.length);
+};
+
+const calculateProgression = (values: number[], value: number) => {
+  if (values.length <= 1) return [...values, value];
+  const mean = calculateMean(values);
+  return [mean, value];
+};
 
 type Test = {
   level: number;
@@ -105,7 +114,9 @@ interface UserInfo {
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-export function GameProvider({ children }: { children: ReactNode }) {
+export function GameProvider ( { children }: { children: ReactNode; } )
+{
+  
   const router = useRouter();
   const [categoryIndex, setCategoryIndex] = useState(0);
   const [gameSession, setGameSession] = useState(SESSION_STATE);
@@ -116,6 +127,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [duration, setDuration] = useState(60);
 
   const { signOut, user } = useAuthenticator();
+  
 
   const updateGameSession = (session: typeof SESSION_STATE) => {
     setGameSession(session);
@@ -155,24 +167,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
     return savedSession;
   };
-  const deleteGameSessionAmp = async ({ id }: { id: string }) => {
-    if (!user) return;
-    const { data, errors } = await client.models.UserSession.delete({
-      id,
-    });
-    return data;
-  };
-
-  const getGameSessionLocal = async () => {
-    if (!storageService) return;
-    const session = await storageService.getGameSession();
-    return session;
-  };
-
-  const clearGameSessionLocal = async () => {
-    if (!storageService) return;
-    await storageService.clearGameSession();
-  };
+  
 
   const haveFinishedAllGames = () => {
     return gameSession.every((category) => category.started && category.ended);
@@ -249,16 +244,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
   };
 
   const endCategory = () => {
-    const calculateMean = (values: number[]) => {
-      return Math.floor(
-        values.reduce((prev, curr) => prev + curr) / values.length
-      );
-    };
-    const calculateProgression = (values: number[], value: number) => {
-      if (values.length <= 1) return [...values, value];
-      const mean = calculateMean(values);
-      return [mean, value];
-    };
     const endCategoryData = gameSession.map((category) => {
       if (category.id === categoryIndex + 1) {
         category.ended = true;
